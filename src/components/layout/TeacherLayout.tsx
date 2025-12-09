@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
+import TeacherImages from "@/components/ui/TeacherImages";
 import JudyHopps from "@/components/ui/JudyHopps";
 
 interface NavItem {
@@ -58,7 +59,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
               whileHover={{ scale: 1.1, rotate: 5 }}
               className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-3xl bg-gradient-to-br from-pink-400 to-purple-400 shadow-lg"
             >
-              <JudyHopps size={28} animated={false} className="sm:w-8 sm:h-8" />
+              <TeacherImages size={36} className="sm:w-12 sm:h-12" />
             </motion.div>
             <div className="hidden sm:block">
               <p className="text-xs font-semibold uppercase tracking-wider text-pink-500">
@@ -137,13 +138,13 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
         )}
       </AnimatePresence>
 
-      <div className="mx-auto grid max-w-7xl gap-4 sm:gap-6 px-4 py-4 sm:py-8 lg:grid-cols-[260px,1fr]">
+      <div className="mx-auto grid max-w-7xl gap-4 sm:gap-6 px-4 py-4 sm:py-8 lg:grid-cols-10">
         {/* Sidebar - Desktop */}
         <motion.nav
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="hidden lg:block rounded-3xl border-2 border-pink-200/50 bg-white/60 backdrop-blur-sm p-6 shadow-lg"
+          className="hidden lg:block lg:col-span-3 rounded-3xl border-2 border-pink-200/50 bg-white/60 backdrop-blur-sm p-6 shadow-lg"
         >
           <div className="mb-6 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-pink-500">
             <Sparkles className="w-4 h-4" />
@@ -176,11 +177,6 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
               );
             })}
           </div>
-          
-          {/* Judy decoration */}
-          <div className="mt-8 flex justify-center">
-            <JudyHopps size={80} animated={true} />
-          </div>
         </motion.nav>
 
         {/* Main Content */}
@@ -188,7 +184,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-3xl border-2 border-pink-200/50 bg-white/80 backdrop-blur-sm p-4 sm:p-6 lg:p-8 shadow-lg"
+          className="rounded-3xl border-2 border-pink-200/50 bg-white/80 backdrop-blur-sm p-4 sm:p-6 lg:p-8 shadow-lg lg:col-span-7"
         >
           {children}
         </motion.main>

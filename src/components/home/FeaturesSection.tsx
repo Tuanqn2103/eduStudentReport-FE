@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import SectionWrapper from "./SectionWrapper";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/Card";
 import { FileText, Bell, MessageSquare, Calendar } from "lucide-react";
@@ -39,15 +42,23 @@ export default function FeaturesSection() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {features.map((item, index) => (
-          <Card key={index} className="border-2 hover:shadow-lg group">
-            <CardHeader>
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 transition-colors ${item.bg}`}>
-                {item.icon}
-              </div>
-              <CardTitle>{item.title}</CardTitle>
-              <CardDescription>{item.desc}</CardDescription>
-            </CardHeader>
-          </Card>
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 + 0.1 }}
+            whileHover={{ y: -6, scale: 1.01 }}
+          >
+            <Card className="border-2 hover:shadow-lg group transition-shadow">
+              <CardHeader>
+                <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 transition-colors ${item.bg}`}>
+                  {item.icon}
+                </div>
+                <CardTitle>{item.title}</CardTitle>
+                <CardDescription>{item.desc}</CardDescription>
+              </CardHeader>
+            </Card>
+          </motion.div>
         ))}
       </div>
     </SectionWrapper>

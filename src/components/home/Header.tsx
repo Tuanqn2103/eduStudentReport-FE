@@ -17,9 +17,9 @@ export default function Header() {
             </div>
           </div>
 
-          <Button variant="outline" size="sm" asChild>
-            <Link href="/login">Đăng nhập</Link>
-          </Button>
+          {/* <Button variant="outline" size="sm" asChild>
+            <Link href="parent/login">Đăng nhập</Link>
+          </Button> */}
         </div>
       </div>
     </header>

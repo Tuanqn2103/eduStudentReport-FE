@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { teacherService } from "@/services/teacher.service";
-import JudyHopps from "@/components/ui/JudyHopps";
+import TeacherImages from "@/components/ui/TeacherImages";
 import Link from "next/link";
 
 type ScoreRow = {
@@ -74,7 +74,7 @@ export default function TeacherStudentScorePage({ params }: { params: { studentI
           </div>
         </div>
         <div className="hidden lg:block">
-          <JudyHopps size={100} animated={true} />
+          <TeacherImages size={70} layout="carousel" />
         </div>
       </motion.div>
 
@@ -197,7 +197,7 @@ export default function TeacherStudentScorePage({ params }: { params: { studentI
         className="flex justify-center pt-8"
       >
         <div className="text-center">
-          <JudyHopps size={120} animated={true} />
+          <TeacherImages size={72} layout="carousel" className="mx-auto" />
           <p className="text-sm text-pink-600 mt-2 font-medium">
             Chúc bạn chấm điểm vui vẻ! 🎀
           </p>

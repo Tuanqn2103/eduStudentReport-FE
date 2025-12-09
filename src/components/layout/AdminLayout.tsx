@@ -133,13 +133,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         )}
       </AnimatePresence>
 
-      <div className="mx-auto grid max-w-7xl gap-4 sm:gap-6 px-4 py-4 sm:py-8 lg:grid-cols-[240px,1fr]">
+      <div className="mx-auto grid max-w-7xl gap-4 sm:gap-6 px-4 py-4 sm:py-8 lg:grid-cols-10">
         {/* Sidebar - Desktop */}
         <motion.nav
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.1 }}
-          className="hidden lg:block rounded-2xl border border-slate-200 bg-white p-4 shadow-lg"
+          className="hidden lg:block lg:col-span-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-lg"
         >
           <div className="mb-4 text-xs font-semibold uppercase tracking-wider text-slate-500">
             Điều hướng
@@ -178,7 +178,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-lg"
+          className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 lg:p-8 shadow-lg lg:col-span-7"
         >
           {children}
         </motion.main>

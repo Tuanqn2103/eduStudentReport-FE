@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import SectionWrapper from "./SectionWrapper";
 
 export default function HowItWorks() {
@@ -32,13 +35,20 @@ export default function HowItWorks() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {steps.map((step, index) => (
-            <div key={index} className="text-center">
+            <motion.div
+              key={index}
+              className="text-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 + index * 0.08 }}
+              whileHover={{ y: -4 }}
+            >
               <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <span className={`text-2xl font-bold ${step.color}`}>{step.number}</span>
               </div>
               <h4 className="text-xl font-semibold text-white mb-2">{step.title}</h4>
               <p className="text-blue-100">{step.desc}</p>
-            </div>
+            </motion.div>
           ))}
         </div>
       </SectionWrapper>

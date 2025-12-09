@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
 import { BookOpen, Lock, Phone, Sparkles } from "lucide-react";
-import JudyHopps from "@/components/ui/JudyHopps";
+import TeacherImages from "@/components/ui/TeacherImages";
 import { cn } from "@/lib/utils";
 
 type Field = {
@@ -91,7 +91,7 @@ export default function AuthForm({
                   transition={{ type: "spring", delay: 0.2 }}
                   className="mb-4 flex justify-center"
                 >
-                  <JudyHopps size={60} animated={true} className="sm:w-20 sm:h-20" />
+                  <TeacherImages size={52} className="sm:h-20 sm:w-auto" />
                 </motion.div>
               ) : (
                 <motion.div

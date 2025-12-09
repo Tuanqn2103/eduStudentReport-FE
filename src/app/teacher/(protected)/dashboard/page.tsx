@@ -6,8 +6,19 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { teacherService } from "@/services/teacher.service";
 import { useQuery } from "@tanstack/react-query";
-import JudyHopps from "@/components/ui/JudyHopps";
+import TeacherImages from "@/components/ui/TeacherImages";
 import Link from "next/link";
+
+type ClassItem = {
+  name: string;
+  students: number;
+  pendingReports: number;
+  color: string;
+};
+
+type DashboardResponse = {
+  classes?: ClassItem[];
+};
 
 const quickStats = [
   { label: "Lớp phụ trách", value: 3, icon: BookOpen, color: "from-pink-400 to-rose-400" },
@@ -16,16 +27,19 @@ const quickStats = [
   { label: "Báo cáo đã gửi", value: 28, icon: CheckCircle, color: "from-pink-400 to-purple-400" },
 ];
 
-const mockClasses = [
+const mockClasses: ClassItem[] = [
   { name: "5A1", students: 32, pendingReports: 4, color: "bg-pink-100" },
   { name: "5A2", students: 31, pendingReports: 2, color: "bg-purple-100" },
   { name: "5A3", students: 32, pendingReports: 6, color: "bg-rose-100" },
 ];
 
 export default function TeacherDashboardPage() {
-  const { data } = useQuery({
+  const { data } = useQuery<DashboardResponse>({
     queryKey: ["teacher-dashboard"],
-    queryFn: teacherService.getDashboard,
+    queryFn: async () => {
+      const res = await teacherService.getDashboard();
+      return res.data as DashboardResponse;
+    },
   });
 
   const classes = data?.classes ?? mockClasses;
@@ -67,12 +81,12 @@ export default function TeacherDashboardPage() {
             </motion.p>
           </div>
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.5, type: "spring" }}
             className="hidden lg:block"
           >
-            <JudyHopps size={150} animated={true} />
+            <TeacherImages size={90} layout="carousel" className="max-w-[360px]" />
           </motion.div>
         </div>
         {/* Decorative elements */}
@@ -129,7 +143,7 @@ export default function TeacherDashboardPage() {
           </Button>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
-          {classes.map((classItem, index) => (
+          {classes.map((classItem: ClassItem, index: number) => (
             <motion.div
               key={classItem.name}
               initial={{ opacity: 0, scale: 0.9 }}
