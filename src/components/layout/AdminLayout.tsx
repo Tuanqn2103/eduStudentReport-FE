@@ -16,7 +16,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
-
+import { authService } from "@/services/auth.service";
+import { message } from "antd";
 interface NavItem {
   label: string;
   href: string;
@@ -36,11 +37,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("role");
-      router.push("/admin/login");
+  const handleLogout = async () => {
+    const role = typeof window !== "undefined" ? localStorage.getItem("role") || "admin" : "admin";
+
+    try {
+      await authService.logout(role);
+      message.success("Đăng xuất thành công");
+    } catch (error) {
+      console.error("Lỗi logout server:", error);
+    } finally {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("role");
+        localStorage.removeItem("userProfile");
+      }
+      router.push(`/${role}/login`);
     }
   };
 

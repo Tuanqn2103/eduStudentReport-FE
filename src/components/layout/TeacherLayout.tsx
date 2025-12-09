@@ -17,7 +17,8 @@ import {
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import TeacherImages from "@/components/ui/TeacherImages";
-import JudyHopps from "@/components/ui/JudyHopps";
+import { authService } from "@/services/auth.service";
+import { message } from "antd";
 
 interface NavItem {
   label: string;
@@ -37,11 +38,21 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("role");
-      router.push("/teacher/login");
+    const handleLogout = async () => {
+    const role = typeof window !== "undefined" ? localStorage.getItem("role") || "teacher" : "teacher";
+
+    try {
+      await authService.logout(role);
+      message.success("Đăng xuất thành công");
+    } catch (error) {
+      console.error("Lỗi logout server:", error);
+    } finally {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("role");
+        localStorage.removeItem("userProfile");
+      }
+      router.push(`/${role}/login`);
     }
   };
 

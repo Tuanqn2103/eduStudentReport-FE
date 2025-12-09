@@ -5,15 +5,27 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { LogOut, FileText } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { authService } from "@/services/auth.service";
+import { message } from "antd";
 
 export default function ParentLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("role");
-      router.push("/parent/login");
+    const handleLogout = async () => {
+    const role = typeof window !== "undefined" ? localStorage.getItem("role") || "parent" : "parent";
+
+    try {
+      await authService.logout(role);
+      message.success("Đăng xuất thành công");
+    } catch (error) {
+      console.error("Lỗi logout server:", error);
+    } finally {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("role");
+        localStorage.removeItem("userProfile");
+      }
+      router.push(`/${role}/login`);
     }
   };
 

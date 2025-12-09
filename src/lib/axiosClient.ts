@@ -7,27 +7,45 @@ const axiosClient = axios.create({
   },
 });
 
-// Interceptor: Gắn Token
-axiosClient.interceptors.request.use((config) => {
-  // Check xem code có đang chạy ở trình duyệt không (để tránh lỗi build server)
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+axiosClient.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
-  }
-  return config;
-});
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-// Interceptor: Xử lý lỗi
 axiosClient.interceptors.response.use(
-  (response) => response.data,
+  (response) => {
+    return response.data;
+  },
   (error) => {
     if (error.response?.status === 401 && typeof window !== 'undefined') {
-      localStorage.removeItem('accessToken');
-      window.location.href = '/login';
+      
+      const currentPath = window.location.pathname;
+      if (!currentPath.includes('/login')) {
+        
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('role');
+        localStorage.removeItem('userProfile');
+
+        if (currentPath.startsWith('/admin')) {
+          window.location.href = '/admin/login';
+        } else if (currentPath.startsWith('/teacher')) {
+          window.location.href = '/teacher/login';
+        } else if (currentPath.startsWith('/parent')) {
+          window.location.href = '/parent/login';
+        } else {
+          window.location.href = '/'; // Mặc định
+        }
+      }
     }
-    return Promise.reject(error);
+    return Promise.reject(error.response?.data || error);
   }
 );
 
