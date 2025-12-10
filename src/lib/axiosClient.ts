@@ -1,4 +1,11 @@
-import axios from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+
+interface CustomAxiosInstance extends AxiosInstance {
+  get<T>(url: string, config?: AxiosRequestConfig): Promise<T>;
+  post<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T>;
+  put<T>(url: string, data?: unknown, config?: AxiosRequestConfig): Promise<T>;
+  delete<T>(url: string, config?: AxiosRequestConfig): Promise<T>;
+}
 
 const axiosClient = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -21,7 +28,7 @@ axiosClient.interceptors.request.use(
 );
 
 axiosClient.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse) => {
     return response.data;
   },
   (error) => {
@@ -41,7 +48,7 @@ axiosClient.interceptors.response.use(
         } else if (currentPath.startsWith('/parent')) {
           window.location.href = '/parent/login';
         } else {
-          window.location.href = '/'; // Mặc định
+          window.location.href = '/';
         }
       }
     }
@@ -49,4 +56,4 @@ axiosClient.interceptors.response.use(
   }
 );
 
-export default axiosClient;
+export default axiosClient as unknown as CustomAxiosInstance;

@@ -17,7 +17,6 @@ import {
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { authService } from "@/services/auth.service";
-import { message } from "antd";
 interface NavItem {
   label: string;
   href: string;
@@ -42,7 +41,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
     try {
       await authService.logout(role);
-      message.success("Đăng xuất thành công");
     } catch (error) {
       console.error("Lỗi logout server:", error);
     } finally {
@@ -57,7 +55,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Header */}
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -102,7 +99,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </motion.header>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -145,7 +141,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </AnimatePresence>
 
       <div className="mx-auto grid max-w-7xl gap-4 sm:gap-6 px-4 py-4 sm:py-8 lg:grid-cols-10">
-        {/* Sidebar - Desktop */}
         <motion.nav
           initial={{ x: -20, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
@@ -184,7 +179,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
         </motion.nav>
 
-        {/* Main Content */}
         <motion.main
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

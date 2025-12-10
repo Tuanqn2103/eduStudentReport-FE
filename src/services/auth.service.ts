@@ -7,7 +7,4 @@ export const authService = {
   logout: async (role: string) => {
     return axiosClient.post(`/${role}/logout`);
   },
-  getMe: async (role: 'admin' | 'teacher' | 'parent') => {
-    return axiosClient.get(`/${role}/me`);
-  }
 };

@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import { LogOut, FileText } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { authService } from "@/services/auth.service";
-import { message } from "antd";
 
 export default function ParentLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -16,7 +15,6 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
 
     try {
       await authService.logout(role);
-      message.success("Đăng xuất thành công");
     } catch (error) {
       console.error("Lỗi logout server:", error);
     } finally {
@@ -31,7 +29,6 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
-      {/* Simple Header */}
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -59,7 +56,6 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
         </div>
       </motion.header>
 
-      {/* Main Content */}
       <motion.main
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
