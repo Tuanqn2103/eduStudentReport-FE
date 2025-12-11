@@ -4,11 +4,20 @@ import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/Button";
+import type { Column } from "@/components/ui/Table";
 import { Table } from "@/components/ui/Table";
 import { teacherService } from "@/services/admin/teacher.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Spin, Tag, Popconfirm, message } from "antd";
 import { Edit, Trash2, Plus, Eye } from "lucide-react";
+
+type TeacherRow = {
+  id: string;
+  name: string;
+  phoneNumber: string;
+  isActive: boolean;
+  classCount: number;
+};
 
 export default function AdminTeachersPage() {
   const router = useRouter();
@@ -30,40 +39,45 @@ export default function AdminTeachersPage() {
     },
   });
 
-  const rows = Array.isArray(data)
+  const rows: TeacherRow[] = Array.isArray(data)
     ? data.map((teacher) => ({
-      id: teacher.id,
-      name: teacher.fullName,
-      phoneNumber: teacher.phoneNumber,
-      isActive: teacher.isActive,
-      classCount: teacher.managedClassIds?.length || 0,
-    }))
+        id: teacher.id,
+        name: teacher.fullName,
+        phoneNumber: teacher.phoneNumber,
+        isActive: teacher.isActive,
+        classCount: teacher.managedClassIds?.length || 0,
+      }))
     : [];
 
-  const columns = useMemo(
-    () => [
+  const columns = useMemo<Column<TeacherRow>[]>(() => [
       {
         key: "name",
         title: "Họ tên",
-        render: (row: typeof rows[0]) => (
+        width: "30%",
+        align: "left",
+        render: (row: TeacherRow) => (
           <span
             onClick={() => router.push(`/admin/teachers/${row.id}`)}
-            className="w-[200px] font-medium text-blue-600 hover:text-blue-800 cursor-pointer transition-colors"
+            className="font-medium text-blue-600 hover:text-blue-800 cursor-pointer transition-colors"
           >
             {row.name}
           </span>
-        )
+        ),
       },
       {
-        key: "phoneNumber", title: "Số điện thoại",
-        render: (row: typeof rows[0]) => <div className="w-[120px]">{row.phoneNumber}</div>
+        key: "phoneNumber",
+        title: "Số điện thoại",
+        width: "20%",
+        align: "left",
+        render: (row: TeacherRow) => <div className="w-[120px]">{row.phoneNumber}</div>,
       },
-
       {
         key: "isActive",
         title: "Trạng thái",
-        render: (row: typeof rows[0]) => (
-          <div className="w-[100px]">
+        width: "15%",
+        align: "center",
+        render: (row: TeacherRow) => (
+          <div className="flex justify-center">
             <Tag color={row.isActive ? "green" : "red"}>
               {row.isActive ? "Hoạt động" : "Đã khóa"}
             </Tag>
@@ -73,17 +87,22 @@ export default function AdminTeachersPage() {
       {
         key: "classCount",
         title: "Lớp chủ nhiệm",
-        render: (row: typeof rows[0]) => (
-          <div className="w-[100px] text-center font-medium">
-            {row.classCount}
-          </div>
+        width: "10%",
+        align: "center",
+        render: (row: TeacherRow) => (
+          <div className="text-center font-medium">{row.classCount}</div>
         ),
       },
       {
         key: "actions",
-        title: "",
-        render: (row: typeof rows[0]) => (
-          <div className="flex gap-2">
+        title: "Thao tác",
+        width: "15%",
+        align: "right",
+        render: (row: TeacherRow) => (
+          <div className="flex gap-2 justify-end items-center">
+            <Button size="sm" variant="ghost" onClick={() => router.push(`/admin/teachers/${row.id}`)} title="Chi tiết">
+              <Eye className="h-4 w-4 text-slate-500" />
+            </Button>
             <Button
               size="sm"
               variant="outline"
