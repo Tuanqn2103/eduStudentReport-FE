@@ -18,20 +18,17 @@ export default function AdminStudentsPage() {
   const queryClient = useQueryClient();
   const [selectedClassId, setSelectedClassId] = useState<string | undefined>();
 
-  // 1. Fetch danh sách lớp để lọc
   const { data: classes, isLoading: loadingClasses } = useQuery({
     queryKey: ["admin-classes-select"],
     queryFn: () => classService.getAll(),
   });
 
-  // 2. Fetch học sinh (Chỉ fetch khi đã chọn lớp)
   const { data: students, isLoading: loadingStudents } = useQuery({
     queryKey: ["admin-students", selectedClassId],
     queryFn: () => studentService.getByClass(selectedClassId!),
     enabled: !!selectedClassId,
   });
 
-  // 3. Xóa học sinh
   const deleteMutation = useMutation({
     mutationFn: (id: string) => studentService.delete(id),
     onSuccess: () => {
@@ -41,7 +38,6 @@ export default function AdminStudentsPage() {
     onError: (err: any) => message.error("Lỗi khi xóa"),
   });
 
-  // 4. Columns (ép kiểu rõ ràng để tránh literal widening của align)
   const columns = useMemo<Column<Student>[]>(() => [
     { key: "studentCode", title: "Mã HS", width: "12%", align: "left" },
     {
@@ -98,9 +94,7 @@ export default function AdminStudentsPage() {
 
   return (
     <PageContainer title="Quản lý học sinh" subtitle="Danh sách và thông tin hồ sơ">
-      {/* Thanh công cụ */}
       <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-4 rounded-lg border border-gray-200">
-        {/* Bộ lọc lớp */}
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <span className="text-sm font-medium text-gray-700">Chọn lớp:</span>
           <Select
@@ -113,7 +107,6 @@ export default function AdminStudentsPage() {
           />
         </div>
 
-        {/* Nút hành động */}
         <div className="flex gap-3 w-full sm:w-auto">
           <Button variant="outline" onClick={() => router.push("/admin/students/import")} className="gap-2">
             <UploadCloud className="h-4 w-4" /> Import Excel
@@ -124,7 +117,6 @@ export default function AdminStudentsPage() {
         </div>
       </div>
 
-      {/* Nội dung bảng */}
       {!selectedClassId ? (
         <div className="text-center py-20 bg-gray-50 rounded-xl border border-dashed border-gray-300 text-gray-500">
           Vui lòng chọn một lớp học để xem danh sách học sinh.
