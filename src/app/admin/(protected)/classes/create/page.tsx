@@ -18,7 +18,6 @@ export default function CreateClassPage() {
       message.success("Tạo lớp thành công!");
       router.push("/admin/classes");
     } catch (error: unknown) {
-      // Type casting an toàn cho error
       const err = error as { response?: { data?: { message?: string } } };
       message.error(err?.response?.data?.message || "Lỗi khi tạo lớp");
     } finally {

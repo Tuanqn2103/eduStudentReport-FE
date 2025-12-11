@@ -14,7 +14,6 @@ export default function EditClassPage({ params }: { params: Promise<{ id: string
   const { id } = use(params);
   const [saving, setSaving] = useState(false);
 
-  // Lấy thông tin lớp hiện tại
   const { data: classData, isLoading } = useQuery({
     queryKey: ["class", id],
     queryFn: () => classService.getById(id),

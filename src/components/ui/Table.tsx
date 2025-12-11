@@ -38,7 +38,6 @@ export function Table<T>({
                   key={col.key}
                   style={{ width: col.width }}
                   className={cn(
-                    // đảm bảo căn dọc đều
                     "align-middle px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm font-semibold text-gray-700 whitespace-nowrap",
                     col.align === "center" && "text-center",
                     col.align === "right" && "text-center"
@@ -68,7 +67,6 @@ export function Table<T>({
                       key={col.key}
                       style={{ width: col.width }}
                       className={cn(
-                        // đảm bảo căn dọc đều
                         "align-middle px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-800 whitespace-nowrap",
                         col.align === "center" && "text-center",
                         col.align === "right" && "text-right"

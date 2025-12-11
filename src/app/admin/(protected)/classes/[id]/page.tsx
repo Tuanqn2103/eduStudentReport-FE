@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Table } from "@/components/ui/Table"; // Tái sử dụng bảng
+import { Table, Column } from "@/components/ui/Table"; // Import type Column nếu Table có export
 import { classService } from "@/services/admin/class.service";
 import { studentService } from "@/services/admin/student.service";
 import { useQuery } from "@tanstack/react-query";
@@ -15,53 +15,90 @@ import { Student } from "@/types/admin.types";
 
 export default function ClassDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
+  
+  // 1. Unwrap params (Next.js 15+)
   const { id } = use(params);
 
-  // 1. Fetch thông tin lớp
+  // 2. Fetch thông tin Lớp
   const { data: classData, isLoading: loadingClass } = useQuery({
     queryKey: ["class", id],
     queryFn: () => classService.getById(id),
   });
 
-  // 2. Fetch danh sách học sinh của lớp
+  // 3. Fetch danh sách Học sinh
   const { data: students, isLoading: loadingStudents } = useQuery({
     queryKey: ["class-students", id],
     queryFn: () => studentService.getByClass(id),
     enabled: !!id // Chỉ chạy khi có id
   });
 
-  if (loadingClass) return <div className="flex justify-center p-10"><Spin size="large" /></div>;
-  if (!classData) return <div className="p-10 text-center">Không tìm thấy lớp học</div>;
+  // 4. Xử lý Loading / Not Found
+  if (loadingClass) {
+    return <div className="flex justify-center p-20"><Spin size="large" /></div>;
+  }
 
-  // Cấu hình bảng học sinh
-  const studentColumns = [
-    { key: "studentCode", title: "Mã HS" },
-    { key: "fullName", title: "Họ và tên" },
+  if (!classData) {
+    return <div className="text-center p-10 text-gray-500">Không tìm thấy thông tin lớp học.</div>;
+  }
+
+  // 5. Cấu hình cột cho bảng Học sinh
+  const studentColumns: Column<Student>[] = [
     { 
-      key: "dateOfBirth", title: "Ngày sinh",
-      render: (row: Student) => row.dateOfBirth ? new Date(row.dateOfBirth).toLocaleDateString('vi-VN') : "-"
+      key: "studentCode", 
+      title: "Mã HS",
+      render: (row) => <span className="font-mono font-medium">{row.studentCode}</span>
     },
-    { key: "gender", title: "Giới tính" },
     { 
-      key: "parentPhone", title: "SĐT Phụ huynh",
-      render: (row: Student) => row.parentPhones?.join(", ") || "-"
+      key: "fullName", 
+      title: "Họ và tên",
+      render: (row) => <span className="font-medium text-gray-900">{row.fullName}</span>
+    },
+    { 
+      key: "dateOfBirth", 
+      title: "Ngày sinh",
+      render: (row) => row.dateOfBirth ? new Date(row.dateOfBirth).toLocaleDateString('vi-VN') : "-"
+    },
+    { 
+      key: "gender", 
+      title: "Giới tính" 
+    },
+    { 
+      key: "parentPhones", 
+      title: "SĐT Phụ huynh",
+      render: (row) => (
+        <div className="flex flex-col">
+          {row.parentPhones?.map((phone, idx) => (
+            <span key={idx} className="text-xs bg-gray-100 px-2 py-1 rounded w-fit mb-1 last:mb-0">
+              {phone}
+            </span>
+          )) || "-"}
+        </div>
+      )
     }
   ];
 
   return (
-    <PageContainer title={`Chi tiết lớp ${classData.className}`} subtitle="Thông tin và danh sách học sinh">
+    <PageContainer 
+      title={`Chi tiết lớp ${classData.className}`} 
+      subtitle="Thông tin chung và danh sách học sinh"
+    >
+      {/* Nút quay lại */}
       <div className="mb-6">
-        <Button variant="ghost" onClick={() => router.back()} className="gap-2 pl-0 hover:bg-transparent hover:text-blue-600">
+        <Button 
+          variant="ghost" 
+          onClick={() => router.back()} 
+          className="gap-2 pl-0 hover:bg-transparent hover:text-blue-600"
+        >
           <ArrowLeft size={18} /> Quay lại danh sách
         </Button>
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        {/* Thông tin lớp */}
-        <Card>
+        {/* Card Thông tin Lớp */}
+        <Card className="bg-gradient-to-r from-blue-50 to-white border-blue-100">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">{classData.className}</h2>
+              <h2 className="text-2xl font-bold text-blue-900 mb-2">{classData.className}</h2>
               <div className="flex gap-6 text-sm text-gray-600">
                 <div className="flex items-center gap-2">
                   <Calendar size={16} className="text-blue-500"/> 
@@ -73,31 +110,45 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
             </div>
+            
+            {/* Trạng thái phân công */}
             <div className="flex flex-col items-end">
-               <p className="text-sm text-gray-500 mb-1">Trạng thái GVCN</p>
+               <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Giáo viên chủ nhiệm</p>
                {classData.teacherIds && classData.teacherIds.length > 0 ? (
-                 <Tag color="green">Đã phân công</Tag>
+                 <Tag color="green" className="text-sm px-3 py-1">Đã phân công</Tag>
                ) : (
-                 <Tag color="orange">Chưa phân công</Tag>
+                 <Tag color="orange" className="text-sm px-3 py-1">Chưa phân công</Tag>
                )}
             </div>
           </div>
         </Card>
 
-        {/* Danh sách học sinh */}
+        {/* Bảng Danh sách Học sinh */}
         <div className="space-y-4">
-          <div className="flex justify-between items-center">
-            <h3 className="text-lg font-bold text-gray-900">Danh sách học sinh</h3>
-            <Button size="sm" onClick={() => router.push(`/admin/students/import`)} className="gap-2">
-              <UserPlus size={16}/> Import Học sinh
+          <div className="flex justify-between items-center bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
+            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+              <Users size={20} className="text-gray-500" />
+              Danh sách học sinh
+            </h3>
+            
+            {/* Nút Import (Truyền classId vào để tiện import luôn vào lớp này) */}
+            {/* Lưu ý: Bạn cần xử lý logic nhận query param ở trang Import nếu muốn tính năng này hoạt động mượt */}
+            <Button 
+              size="sm" 
+              onClick={() => router.push(`/admin/students/import`)} 
+              className="gap-2"
+            >
+              <UserPlus size={16}/> Thêm học sinh
             </Button>
           </div>
           
-          {loadingStudents ? <div className="text-center py-4"><Spin/></div> : (
+          {loadingStudents ? (
+            <div className="flex justify-center py-10"><Spin /></div>
+          ) : (
             <Table 
               columns={studentColumns} 
               data={Array.isArray(students) ? students : []} 
-              emptyText="Lớp này chưa có học sinh nào."
+              emptyText="Lớp này chưa có học sinh nào. Hãy import danh sách."
             />
           )}
         </div>
