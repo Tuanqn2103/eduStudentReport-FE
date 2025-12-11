@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-
+import { Loader2 } from "lucide-react";
 type Variant = "default" | "outline" | "ghost";
 type Size = "sm" | "md" | "lg";
 
@@ -10,6 +10,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   size?: Size;
   asChild?: boolean;
   href?: string;
+  loading?: boolean;
   children: React.ReactNode;
 }
 
@@ -19,7 +20,9 @@ export function Button({
   asChild = false,
   href,
   className = "",
+  loading = false,
   children,
+  disabled,
   ...props
 }: ButtonProps) {
   const base =
@@ -49,7 +52,12 @@ export function Button({
   }
 
   return (
-    <button className={classes} {...props}>
+    <button
+      className={classes}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
       {children}
     </button>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import { useRouter } from "next/navigation";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/Button";
@@ -8,12 +8,15 @@ import { Card } from "@/components/ui/Card";
 import { studentService } from "@/services/admin/student.service";
 import { classService } from "@/services/admin/class.service";
 import { useQuery } from "@tanstack/react-query";
-import { Spin, Tag, Descriptions, Avatar } from "antd";
-import { ArrowLeft, Edit, Phone, User, Calendar, BookOpen, KeyRound } from "lucide-react";
+import { Spin, Tag, message, Alert } from "antd";
+import { ArrowLeft, Edit, Phone, Calendar, BookOpen, KeyRound, RefreshCw, Copy } from "lucide-react";
 
 export default function StudentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
   const { id } = use(params);
+
+  const [newPin, setNewPin] = useState<string | null>(null);
+  const [resetting, setResetting] = useState(false);
 
   const { data: student, isLoading: loadingStudent } = useQuery({
     queryKey: ["student", id],
@@ -25,6 +28,29 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
     queryFn: () => classService.getById(student!.classId),
     enabled: !!student?.classId,
   });
+
+  const handleResetPin = async () => {
+    try {
+      setResetting(true);
+      const res: any = await studentService.resetPin(id);
+
+      const pin = res.data?.newPin || res.newPin;
+
+      setNewPin(pin);
+      message.success("Cấp lại mã PIN thành công!");
+    } catch (error) {
+      message.error("Lỗi khi cấp lại mã PIN");
+    } finally {
+      setResetting(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    if (newPin) {
+      navigator.clipboard.writeText(newPin);
+      message.success("Đã copy mã PIN!");
+    }
+  };
 
   if (loadingStudent) return <div className="flex justify-center p-20"><Spin size="large" /></div>;
   if (!student) return <div className="text-center p-10 text-gray-500">Không tìm thấy hồ sơ học sinh.</div>;
@@ -103,11 +129,11 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
           </Card>
+
           <Card>
             <h3 className="font-bold text-gray-900 mb-4 text-lg">
               Thông tin liên lạc (Phụ huynh)
             </h3>
-
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <div className="p-2 bg-green-50 rounded-lg">
@@ -140,12 +166,33 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
               </div>
               <h3 className="font-bold text-amber-900">Mã PIN Phụ huynh</h3>
             </div>
+
             <p className="text-sm text-amber-800 mb-4">
-              Mã PIN được dùng để phụ huynh đăng nhập. Mã này đã được mã hóa trong hệ thống.
+              Mã PIN được dùng để phụ huynh đăng nhập. Vì lý do bảo mật, bạn không thể xem mã cũ.
             </p>
-            <Button className="w-full bg-white text-amber-700 hover:bg-amber-100 border-amber-200">
-              Cấp lại mã PIN mới
-            </Button>
+
+            {newPin ? (
+              <div className="bg-white p-4 rounded-lg border-2 border-amber-400 mb-4 text-center animate-in zoom-in duration-300">
+                <p className="text-xs text-gray-500 mb-1">Mã PIN mới của học sinh:</p>
+                <div className="text-3xl font-bold text-amber-600 tracking-widest font-mono mb-2">
+                  {newPin}
+                </div>
+                <Button size="sm" variant="outline" onClick={copyToClipboard} className="w-full gap-2">
+                  <Copy size={14} /> Copy mã PIN
+                </Button>
+                <p className="text-xs text-red-500 mt-2 italic">
+                  * Hãy gửi mã này cho phụ huynh ngay.
+                </p>
+              </div>
+            ) : (
+              <Button
+                onClick={handleResetPin}
+                loading={resetting}
+                className="w-full bg-white text-amber-700 hover:bg-amber-100 border-amber-200 gap-2"
+              >
+                <RefreshCw size={16} /> Cấp lại mã PIN mới
+              </Button>
+            )}
           </Card>
         </div>
 

@@ -28,4 +28,7 @@ export const studentService = {
   delete: async (id: string) => {
     return axiosClient.delete<ApiResponse<null>>(`/admin/students/${id}`);
   },
+  resetPin: async (id: string) => {
+    return axiosClient.post<ApiResponse<{ newPin: string }>>(`/admin/students/${id}/reset-pin`);
+  }
 };
