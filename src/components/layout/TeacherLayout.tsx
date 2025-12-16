@@ -27,7 +27,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Dashboard", href: "/teacher/dashboard", icon: <LayoutDashboard className="w-5 h-5" /> },
-  { label: "Lớp của tôi", href: "/teacher/class", icon: <Users className="w-5 h-5" /> },
+  { label: "Lớp của tôi", href: "/teacher/classes", icon: <Users className="w-5 h-5" /> },
   { label: "Nhập điểm", href: "/teacher/score", icon: <FileText className="w-5 h-5" /> },
   { label: "Báo cáo PDF", href: "/teacher/reports", icon: <FileDown className="w-5 h-5" /> },
 ];

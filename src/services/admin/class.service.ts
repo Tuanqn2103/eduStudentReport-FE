@@ -25,8 +25,4 @@ export const classService = {
   delete: async (id: string) => {
     return axiosClient.delete<ApiResponse<null>>(`/admin/classes/${id}`);
   },
-
-  assignTeacher: async (data: AssignTeacherPayload) => {
-    return axiosClient.post<ApiResponse<null>>('/admin/assign', data);
-  },
 };
