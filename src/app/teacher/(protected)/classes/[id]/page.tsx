@@ -37,9 +37,9 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ i
       title: "Trạng thái Điểm", 
       render: (row: StudentInClass) => {
         if (row.reportStatus === 'Đã công bố') 
-          return <Tag color="green" icon={<CheckCircle size={12}/>} className="flex items-center gap-1 w-fit">Đã công bố</Tag>;
+          return <Tag color="green">Đã công bố</Tag>;
         if (row.reportStatus === 'Lưu nháp') 
-          return <Tag color="orange" icon={<Clock size={12}/>} className="flex items-center gap-1 w-fit">Lưu nháp</Tag>;
+          return <Tag color="orange">Lưu nháp</Tag>;
         return <Tag color="default">Chưa nhập</Tag>;
       }
     },

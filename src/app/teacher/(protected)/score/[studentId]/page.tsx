@@ -1,55 +1,126 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, use } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Save, CheckCircle, ArrowLeft, Sparkles } from "lucide-react";
+import { Save, ArrowLeft, Sparkles, CheckCircle } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
-import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { teacherService } from "@/services/teacher.service";
+import { teacherService } from "@/services/teacher/teacher.service";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Select } from "antd";
 import TeacherImages from "@/components/ui/TeacherImages";
-import Link from "next/link";
+import { Grade, UpsertReportPayload } from "@/types/teacher.types";
+import { Spin, message, InputNumber, Input as AntInput } from "antd";
 
+const { Option } = Select;
+const { TextArea } = AntInput;
 type ScoreRow = {
   subject: string;
-  oral: string;
-  quiz: string;
-  midterm: string;
-  final: string;
+  score: number | null;
+  comment: string;
 };
 
-const defaultRows: ScoreRow[] = [
-  { subject: "Toán", oral: "8.5", quiz: "8.0", midterm: "8.2", final: "8.8" },
-  { subject: "Tiếng Việt", oral: "9.0", quiz: "8.8", midterm: "9.0", final: "9.2" },
-  { subject: "Tiếng Anh", oral: "8.0", quiz: "8.5", midterm: "8.7", final: "8.9" },
-  { subject: "Khoa học", oral: "8.5", quiz: "8.2", midterm: "8.5", final: "8.7" },
-  { subject: "Lịch sử", oral: "9.0", quiz: "8.5", midterm: "8.8", final: "9.0" },
-];
+const generateComment = (score: number | null): string => {
+  if (score === null) return "Chưa có nhận xét.";
+  if (score >= 8.0) return "Giỏi";
+  if (score >= 6.5) return "Khá";
+  if (score >= 5.0) return "Trung bình";
+  if (score >= 4.0) return "Yếu";
+  return "Kém";
+};
 
-export default function TeacherStudentScorePage({ params }: { params: { studentId: string } }) {
-  const [rows, setRows] = useState<ScoreRow[]>(defaultRows);
-  const [saving, setSaving] = useState(false);
+export default function TeacherStudentScorePage({ params }: { params: Promise<{ studentId: string }> }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { studentId } = use(params);
+
+  const classId = searchParams.get("classId");
+  const term = searchParams.get("term");
+  const queryClient = useQueryClient();
+
+  const [rows, setRows] = useState<ScoreRow[]>([]);
+  const [generalComment, setGeneralComment] = useState("");
   const [saved, setSaved] = useState(false);
 
-  const handleChange = (index: number, key: keyof ScoreRow, value: string) => {
-    setRows((prev) => prev.map((row, i) => (i === index ? { ...row, [key]: value } : row)));
+  const { data: subjects } = useQuery({
+    queryKey: ["subjects"],
+    queryFn: teacherService.getSubjects
+  });
+
+  const { data: report, isLoading } = useQuery({
+    queryKey: ["student-report", studentId, term],
+    queryFn: () => teacherService.getStudentReport(studentId, String(term)),
+    enabled: !!term
+  });
+
+  useEffect(() => {
+    if (subjects) {
+      const initialRows: ScoreRow[] = subjects.map(sub => {
+        const existGrade = report?.grades?.find(g => g.subject === sub.name);
+        return {
+          subject: sub.name,
+          score: existGrade?.score ?? null,
+          comment: existGrade?.comment || generateComment(existGrade?.score || null)
+        };
+      });
+      setRows(initialRows);
+      setGeneralComment(report?.generalComment || "");
+    }
+  }, [report, subjects]);
+
+  const saveMutation = useMutation({
+    mutationFn: (payload: UpsertReportPayload) => teacherService.saveReport(payload),
+    onSuccess: () => {
+      setSaved(true);
+      message.success("Lưu thành công!");
+      queryClient.invalidateQueries({ queryKey: ["class-students", classId, term] });
+      setTimeout(() => setSaved(false), 3000);
+    },
+    onError: () => message.error("Lỗi khi lưu điểm")
+  });
+
+  const handleSave = (isPublished: boolean = true) => {
+    if (!classId || !term) return;
+
+    const gradesPayload: Grade[] = rows
+      .filter(row => row.score !== null)
+      .map(row => ({
+        subject: row.subject,
+        score: row.score as number,
+        comment: row.comment
+      }));
+
+    const payload: UpsertReportPayload = {
+      studentId,
+      classId,
+      term,
+      grades: gradesPayload,
+      generalComment,
+      isPublished
+    };
+
+    saveMutation.mutate(payload);
+  };
+
+  const handleChange = (index: number, field: keyof ScoreRow, value: any) => {
+    setRows(prev => prev.map((row, i) => {
+      if (i === index) {
+        const updatedRow = { ...row, [field]: value };
+        if (field === "score") {
+          updatedRow.comment = generateComment(value);
+        }
+        return updatedRow;
+      }
+      return row;
+    }));
     setSaved(false);
   };
 
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      await teacherService.upsertScores(params.studentId, { scores: rows });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
-    } finally {
-      setSaving(false);
-    }
-  };
+  if (isLoading || !subjects) return <div className="flex justify-center p-20"><Spin size="large" /></div>;
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -59,18 +130,20 @@ export default function TeacherStudentScorePage({ params }: { params: { studentI
           <Button
             asChild
             variant="ghost"
-            className="rounded-full border-2 border-pink-200 text-pink-600 hover:bg-pink-100"
+            className="rounded-full border-2 border-pink-200 text-pink-600 hover:bg-pink-100 cursor-pointer"
           >
-            <Link href="/teacher/class">
+            <div onClick={() => router.back()} className="flex items-center">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Quay lại
-            </Link>
+            </div>
           </Button>
           <div className="min-w-0 flex-1">
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
               Nhập điểm học sinh
             </h1>
-            <p className="text-sm sm:text-base text-pink-600 mt-1 truncate">Học sinh: {params.studentId}</p>
+            <p className="text-sm sm:text-base text-pink-600 mt-1 truncate">
+              Học sinh: <span className="font-bold">{report?.student?.fullName || "Đang tải..."}</span> - Kỳ: {term}
+            </p>
           </div>
         </div>
         <div className="hidden lg:block">
@@ -78,55 +151,26 @@ export default function TeacherStudentScorePage({ params }: { params: { studentI
         </div>
       </motion.div>
 
-      {/* Success Message */}
-      <AnimatePresence>
-        {saved && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="rounded-2xl bg-gradient-to-r from-green-400 to-emerald-400 p-4 text-white shadow-lg"
-          >
-            <div className="flex items-center gap-3">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ type: "spring" }}
-              >
-                <CheckCircle className="h-6 w-6" />
-              </motion.div>
-              <div>
-                <p className="font-bold">Đã lưu thành công!</p>
-                <p className="text-sm text-green-50">Bảng điểm đã được cập nhật</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Score Table */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
       >
         <Card className="border-2 border-pink-200 bg-white shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-t-2xl">
-            <CardTitle className="flex items-center gap-2 text-pink-900">
-              <Sparkles className="h-5 w-5" />
-              Bảng điểm chi tiết
-            </CardTitle>
-          </CardHeader>
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-pink-100">
                 <thead className="bg-gradient-to-r from-pink-100 to-purple-100">
                   <tr>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold text-pink-900">Môn học</th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold text-pink-900">Miệng</th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold text-pink-900">15 phút</th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold text-pink-900">1 tiết</th>
-                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-bold text-pink-900">Cuối kỳ</th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-pink-900 w-[30%] rounded-tl-lg">
+                      Môn học
+                    </th>
+                    <th className="px-6 py-4 text-center text-sm font-bold text-pink-900 w-[20%]">
+                      Điểm Tổng
+                    </th>
+                    <th className="px-6 py-4 text-left text-sm font-bold text-pink-900 w-[50%] rounded-tr-lg">
+                      Nhận xét chi tiết
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-pink-50 bg-white">
@@ -138,18 +182,28 @@ export default function TeacherStudentScorePage({ params }: { params: { studentI
                       transition={{ delay: 0.3 + idx * 0.05 }}
                       className="hover:bg-pink-50 transition-colors"
                     >
-                      <td className="px-3 sm:px-6 py-3 sm:py-4 text-sm font-semibold text-pink-900">{row.subject}</td>
-                      {(["oral", "quiz", "midterm", "final"] as (keyof ScoreRow)[]).map((key) => (
-                        <td key={key} className="px-3 sm:px-6 py-3 sm:py-4">
-                          <Input
-                            type="text"
-                            value={row[key]}
-                            onChange={(e) => handleChange(idx, key, e.target.value)}
-                            className="h-9 sm:h-10 w-16 sm:w-24 rounded-xl border-2 border-pink-200 focus:border-pink-400 focus:ring-pink-200 text-sm"
-                            placeholder="0.0"
-                          />
-                        </td>
-                      ))}
+                      <td className="px-6 py-4 text-sm font-semibold text-pink-900">{row.subject}</td>
+
+                      <td className="px-6 py-4 text-center">
+                        <Select
+                          value={row.score}
+                          placeholder="Chọn điểm"
+                          onChange={(value) => handleChange(idx, "score", value)}
+                          className="w-[100px]"
+                        >
+                          {[...Array(11)].map((_, i) => (
+                            <Option key={i} value={i}>
+                              {i}
+                            </Option>
+                          ))}
+                        </Select>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <div className="border border-pink-200 rounded-lg p-2 text-sm text-pink-900">
+                          {row.comment || "Chưa có nhận xét"}
+                        </div>
+                      </td>
                     </motion.tr>
                   ))}
                 </tbody>
@@ -158,50 +212,59 @@ export default function TeacherStudentScorePage({ params }: { params: { studentI
           </CardContent>
         </Card>
       </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+      >
+        <Card className="shadow-lg border-2 border-pink-100">
+          <CardHeader>
+            <CardTitle className="text-pink-900">Nhận xét chung & Hạnh kiểm</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TextArea
+              rows={4}
+              value={generalComment}
+              onChange={(e) => setGeneralComment(e.target.value)}
+              placeholder="Nhận xét tổng quát về nề nếp, chuyên cần..."
+              className="border-pink-200 focus:border-pink-500 rounded-xl text-base"
+            />
+          </CardContent>
+        </Card>
+      </motion.div>
 
-      {/* Action Buttons */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="flex justify-end gap-3"
+        className="flex justify-end gap-3 pb-10"
       >
         <Button
           variant="outline"
-          asChild
+          onClick={() => router.back()}
           className="rounded-full border-2 border-pink-200 text-pink-600 hover:bg-pink-50"
         >
-          <Link href="/teacher/dashboard">Hủy</Link>
+          Hủy bỏ
         </Button>
         <Button
-          onClick={handleSave}
-          disabled={saving}
-          className="rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600 shadow-lg hover:shadow-xl"
+          onClick={() => handleSave(false)}
+          disabled={saveMutation.isPending}
+          className="rounded-full bg-white border-2 border-green-500 text-green-600 hover:bg-green-50 shadow-md"
         >
-          {saving ? (
-            "Đang lưu..."
-          ) : (
+          Lưu nháp
+        </Button>
+        <Button
+          onClick={() => handleSave(true)}
+          disabled={saveMutation.isPending}
+          className="rounded-full bg-gradient-to-r from-pink-500 to-purple-500 text-white hover:from-pink-600 hover:to-purple-600 shadow-lg hover:shadow-xl px-8"
+        >
+          {saveMutation.isPending ? "Đang lưu..." : (
             <>
               <Save className="h-4 w-4 mr-2" />
-              Lưu bảng điểm
+              Công bố điểm
             </>
           )}
         </Button>
-      </motion.div>
-
-      {/* Judy Decoration */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.7 }}
-        className="flex justify-center pt-8"
-      >
-        <div className="text-center">
-          <TeacherImages size={72} layout="carousel" className="mx-auto" />
-          <p className="text-sm text-pink-600 mt-2 font-medium">
-            Chúc bạn chấm điểm vui vẻ! 🎀
-          </p>
-        </div>
       </motion.div>
     </div>
   );

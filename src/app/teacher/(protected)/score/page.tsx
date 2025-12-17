@@ -1,35 +1,122 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/Button";
 import { Table } from "@/components/ui/Table";
-
-const students = [
-  { id: "STU001", name: "Phạm Minh Châu", className: "5A1" },
-  { id: "STU002", name: "Đỗ Gia Bảo", className: "5A2" },
-];
+import { teacherService } from "@/services/teacher/teacher.service";
+import { useQuery } from "@tanstack/react-query";
+import { Select, Spin, Tag, Empty } from "antd";
+import { Edit, CheckCircle, Clock } from "lucide-react";
+import { StudentInClass } from "@/types/teacher.types";
 
 export default function TeacherScoreIndexPage() {
+  const router = useRouter();
+  const [selectedClassId, setSelectedClassId] = useState<string | undefined>();
+  const [selectedTerm, setSelectedTerm] = useState<string>("HK1");
+
+  // 1. Lấy danh sách lớp chủ nhiệm để lọc
+  const { data: classes, isLoading: loadingClasses } = useQuery({
+    queryKey: ["teacher-classes"],
+    queryFn: teacherService.getMyClasses,
+  });
+
+  // 2. Lấy danh sách học sinh (Chỉ khi đã chọn lớp)
+  const { data: students, isLoading: loadingStudents } = useQuery({
+    queryKey: ["class-students", selectedClassId, selectedTerm],
+    queryFn: () => teacherService.getClassStudents(selectedClassId!, selectedTerm),
+    enabled: !!selectedClassId, // Chỉ chạy khi có classId
+  });
+
+  // Cấu hình bảng
+  const columns = [
+    { 
+      key: "studentCode", 
+      title: "Mã HS",
+      render: (row: StudentInClass) => <span className="font-mono text-gray-600">{row.studentCode}</span>
+    },
+    { 
+      key: "fullName", 
+      title: "Họ và tên",
+      render: (row: StudentInClass) => <span className="font-medium text-gray-900">{row.fullName}</span>
+    },
+    {
+      key: "status",
+      title: "Trạng thái điểm",
+      render: (row: StudentInClass) => {
+        if (row.reportStatus === 'Đã công bố') 
+          return <Tag color="green">Đã công bố</Tag>;
+        if (row.reportStatus === 'Lưu nháp') 
+          return <Tag color="orange">Lưu nháp</Tag>;
+        return <Tag color="default">Chưa nhập</Tag>;
+      }
+    },
+    {
+      key: "actions",
+      title: "Thao tác",
+      render: (row: StudentInClass) => (
+        <Button 
+          size="sm" 
+          // Chuyển hướng sang trang chi tiết nhập điểm (đã fix lỗi ở trên)
+          onClick={() => router.push(`/teacher/score/${row.id}?classId=${selectedClassId}&term=${selectedTerm}`)}
+          variant="outline" 
+          className="gap-2"
+        >
+          <Edit size={14} /> Nhập điểm
+        </Button>
+      ),
+    },
+  ];
+
+  if (loadingClasses) return <div className="flex justify-center p-20"><Spin size="large"/></div>;
+
   return (
-    <PageContainer title="Nhập điểm" subtitle="Chọn học sinh để cập nhật bảng điểm">
-      <Table
-        columns={[
-          { key: "id", title: "Mã HS" },
-          { key: "name", title: "Tên" },
-          { key: "className", title: "Lớp" },
-          {
-            key: "actions",
-            title: "Thao tác",
-            render: (row: any) => (
-              <Button size="sm" href={`/teacher/score/${row.id}`} variant="outline" asChild>
-                Nhập điểm
-              </Button>
-            ),
-          },
-        ]}
-        data={students}
-      />
+    <PageContainer title="Quản lý điểm số" subtitle="Chọn lớp và học sinh để cập nhật bảng điểm">
+      
+      {/* Bộ lọc */}
+      <div className="bg-white p-4 rounded-xl border border-gray-200 mb-6 shadow-sm flex flex-col sm:flex-row gap-4 items-end sm:items-center">
+        <div className="w-full sm:w-64">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Chọn lớp chủ nhiệm</label>
+          <Select
+            className="w-full"
+            placeholder="Chọn lớp..."
+            size="large"
+            onChange={setSelectedClassId}
+            value={selectedClassId}
+            options={classes?.map(c => ({ label: `${c.className} (${c.schoolYear})`, value: c.id }))}
+          />
+        </div>
+
+        <div className="w-full sm:w-40">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Kỳ học</label>
+          <Select
+            className="w-full"
+            size="large"
+            value={selectedTerm}
+            onChange={setSelectedTerm}
+            options={[
+              { value: 'HK1', label: 'Học kỳ 1' },
+              { value: 'HK2', label: 'Học kỳ 2' },
+            ]}
+          />
+        </div>
+      </div>
+
+      {/* Bảng dữ liệu */}
+      {!selectedClassId ? (
+        <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
+          <p className="text-gray-500 mb-2">Vui lòng chọn lớp học để xem danh sách.</p>
+        </div>
+      ) : loadingStudents ? (
+        <div className="flex justify-center p-10"><Spin size="large"/></div>
+      ) : (
+        <Table
+          columns={columns}
+          data={students || []}
+          emptyText="Lớp này chưa có học sinh nào."
+        />
+      )}
     </PageContainer>
   );
 }
-

@@ -26,6 +26,8 @@ export interface StudentInClass {
   id: string;
   studentCode: string;
   fullName: string;
+  gender?: string;
+  dateOfBirth?: string;
   reportStatus: 'Đã công bố' | 'Lưu nháp' | 'Chưa nhập';
   isParentViewed: boolean;
 }
