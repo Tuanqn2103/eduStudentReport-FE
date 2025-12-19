@@ -8,6 +8,7 @@ export default function PageContainer({
   title?: string;
   subtitle?: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">

@@ -1,12 +1,14 @@
 import axiosClient from "@/lib/axiosClient";
-import { 
-  TeacherDashboardStats, 
-  MyClass, 
-  StudentInClass, 
-  StudentReport, 
-  UpsertReportPayload, 
-  Subject, 
-  ApiResponse 
+import {
+  TeacherDashboardStats,
+  MyClass,
+  StudentInClass,
+  StudentReport,
+  UpsertReportPayload,
+  Subject,
+  StudentDetail, 
+  UpdateStudentPayload,
+  ApiResponse
 } from "@/types/teacher.types";
 
 export const teacherService = {
@@ -36,5 +38,14 @@ export const teacherService = {
   },
   getSubjects: async () => {
     return axiosClient.get<Subject[]>('/teacher/subjects');
+  },
+  deleteReport: async (reportId: string) => {
+    return axiosClient.delete(`/teacher/reports/${reportId}`);
+  },
+  getStudentDetail: async (id: string) => {
+    return axiosClient.get<StudentDetail>(`/teacher/students/${id}`);
+  },
+  updateStudent: async (id: string, data: UpdateStudentPayload) => {
+    return axiosClient.put<ApiResponse<StudentDetail>>(`/teacher/students/${id}`, data);
   }
 };

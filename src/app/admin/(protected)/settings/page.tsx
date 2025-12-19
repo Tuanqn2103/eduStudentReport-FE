@@ -4,7 +4,6 @@ import { useState } from "react";
 import PageContainer from "@/components/layout/PageContainer";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
-import { adminService } from "@/services/admin.service";
 
 export default function AdminSettingsPage() {
   const [schoolName, setSchoolName] = useState("Trường Tiểu Học Phổ Văn");
@@ -13,11 +12,6 @@ export default function AdminSettingsPage() {
 
   const handleSave = async () => {
     setSaving(true);
-    try {
-      await adminService.updateSettings({ schoolName, contact });
-    } finally {
-      setSaving(false);
-    }
   };
 
   return (

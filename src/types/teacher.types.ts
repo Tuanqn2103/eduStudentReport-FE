@@ -72,3 +72,23 @@ export interface Subject {
   code: string;
   isActive: boolean;
 }
+
+
+export interface StudentDetail {
+  id: string;
+  studentCode: string;
+  fullName: string;
+  gender: string;
+  dateOfBirth: string | null;
+  parentPhones: string[];
+  classId: string;
+  class?: {
+    className: string;
+  };
+}
+
+export interface UpdateStudentPayload {
+  gender?: string;
+  dateOfBirth?: string | Date;
+  parentPhones?: string[];
+}

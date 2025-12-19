@@ -67,7 +67,6 @@ export default function TeacherClassesPage() {
                       <div className="p-2 rounded-full bg-gradient-to-br from-pink-400 to-purple-400 text-white shadow-md">
                         <BookOpen size={14} />
                       </div>
-                      <Heart className="h-4 w-4 text-pink-400" />
                     </div>
                   </div>
                 </CardHeader>

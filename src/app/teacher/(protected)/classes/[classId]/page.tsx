@@ -1,70 +1,88 @@
 "use client";
 
-import { use, useState } from "react";
+import { use, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import PageContainer from "@/components/layout/PageContainer";
-import { Table } from "@/components/ui/Table";
+import { Table, Column } from "@/components/ui/Table";
 import { Button } from "@/components/ui/Button";
 import { teacherService } from "@/services/teacher/teacher.service";
 import { useQuery } from "@tanstack/react-query";
 import { Select, Tag, Spin } from "antd";
-import { Edit, CheckCircle, Clock, Eye, ArrowLeft } from "lucide-react";
+import { Edit, CheckCircle, Clock, Eye, ArrowLeft, UserCog } from "lucide-react";
 import { StudentInClass } from "@/types/teacher.types";
 
-export default function TeacherClassDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function TeacherClassDetailPage({ params }: { params: Promise<{ classId: string }> }) {
   const router = useRouter();
-  const { id } = use(params);
+  const { classId } = use(params);
   const [term, setTerm] = useState("HK1");
 
   const { data: students, isLoading } = useQuery({
-    queryKey: ["class-students", id, term],
-    queryFn: () => teacherService.getClassStudents(id, term)
+    queryKey: ["class-students", classId, term],
+    queryFn: () => teacherService.getClassStudents(classId, term)
   });
 
-  const columns = [
+  const columns = useMemo<Column<StudentInClass>[]>(() => [
     { 
       key: "studentCode", 
       title: "Mã HS", 
-      render: (row: StudentInClass) => <span className="font-mono font-medium">{row.studentCode}</span>
+      render: (row) => <span className="font-mono text-gray-600">{row.studentCode}</span>
     },
     { 
       key: "fullName", 
       title: "Họ và tên", 
-      render: (row: StudentInClass) => <span className="font-medium text-slate-900">{row.fullName}</span> 
+      render: (row) => (
+        <span 
+          className="font-medium text-slate-900 cursor-pointer hover:text-blue-600 transition-colors"
+          onClick={() => router.push(`/teacher/classes/${classId}/students/${row.id}`)}
+        >
+          {row.fullName}
+        </span>
+      )
     },
     { 
       key: "reportStatus", 
       title: "Trạng thái Điểm", 
-      render: (row: StudentInClass) => {
+      render: (row) => {
         if (row.reportStatus === 'Đã công bố') 
-          return <Tag color="green">Đã công bố</Tag>;
+          return <Tag color="green" icon={<CheckCircle size={12}/>}>Đã công bố</Tag>;
         if (row.reportStatus === 'Lưu nháp') 
-          return <Tag color="orange">Lưu nháp</Tag>;
+          return <Tag color="orange" icon={<Clock size={12}/>}>Lưu nháp</Tag>;
         return <Tag color="default">Chưa nhập</Tag>;
       }
     },
     { 
       key: "isParentViewed", 
       title: "Phụ huynh", 
-      render: (row: StudentInClass) => row.isParentViewed 
+      render: (row) => row.isParentViewed 
         ? <Tag color="blue" icon={<Eye size={12}/>}>Đã xem</Tag> 
         : <span className="text-gray-400 text-sm">Chưa xem</span>
     },
     {
       key: "actions",
       title: "Thao tác",
-      render: (row: StudentInClass) => (
-        <Button 
-          variant="outline"
-          size="sm" 
-          className="gap-2"
-          onClick={() => router.push(`/teacher/reports/${row.id}?classId=${id}&term=${term}`)}
-        >
-          <Edit size={14}/> Nhập điểm
-        </Button>
+      render: (row) => (
+        <div className="flex gap-2">
+          <Button 
+            variant="outline"
+            size="sm" 
+            className="gap-2"
+            onClick={() => router.push(`/teacher/score/${row.id}?classId=${classId}&term=${term}`)}
+          >
+            <Edit size={14}/> Nhập điểm
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="sm"
+            title="Hồ sơ học sinh"
+            onClick={() => router.push(`/teacher/classes/${classId}/students/${row.id}`)}
+          >
+            <UserCog size={16} className="text-slate-500" />
+          </Button>
+        </div>
       )
     }
-  ];
+  ], [classId, term, router]);
 
   return (
     <PageContainer title="Danh sách học sinh" subtitle={`Quản lý điểm số - ${term}`}>
