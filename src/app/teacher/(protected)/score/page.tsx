@@ -16,20 +16,17 @@ export default function TeacherScoreIndexPage() {
   const [selectedClassId, setSelectedClassId] = useState<string | undefined>();
   const [selectedTerm, setSelectedTerm] = useState<string>("HK1");
 
-  // 1. Lấy danh sách lớp chủ nhiệm để lọc
   const { data: classes, isLoading: loadingClasses } = useQuery({
     queryKey: ["teacher-classes"],
     queryFn: teacherService.getMyClasses,
   });
 
-  // 2. Lấy danh sách học sinh (Chỉ khi đã chọn lớp)
   const { data: students, isLoading: loadingStudents } = useQuery({
     queryKey: ["class-students", selectedClassId, selectedTerm],
     queryFn: () => teacherService.getClassStudents(selectedClassId!, selectedTerm),
-    enabled: !!selectedClassId, // Chỉ chạy khi có classId
+    enabled: !!selectedClassId,
   });
 
-  // Cấu hình bảng
   const columns = [
     { 
       key: "studentCode", 
@@ -58,7 +55,6 @@ export default function TeacherScoreIndexPage() {
       render: (row: StudentInClass) => (
         <Button 
           size="sm" 
-          // Chuyển hướng sang trang chi tiết nhập điểm (đã fix lỗi ở trên)
           onClick={() => router.push(`/teacher/score/${row.id}?classId=${selectedClassId}&term=${selectedTerm}`)}
           variant="outline" 
           className="gap-2"
@@ -74,10 +70,8 @@ export default function TeacherScoreIndexPage() {
   return (
     <PageContainer title="Quản lý điểm số" subtitle="Chọn lớp và học sinh để cập nhật bảng điểm">
       
-      {/* Bộ lọc */}
       <div className="bg-white p-4 rounded-xl border border-gray-200 mb-6 shadow-sm flex flex-col sm:flex-row gap-4 items-end sm:items-center">
         <div className="w-full sm:w-64">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Chọn lớp chủ nhiệm</label>
           <Select
             className="w-full"
             placeholder="Chọn lớp..."
@@ -89,7 +83,6 @@ export default function TeacherScoreIndexPage() {
         </div>
 
         <div className="w-full sm:w-40">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Kỳ học</label>
           <Select
             className="w-full"
             size="large"
@@ -103,7 +96,6 @@ export default function TeacherScoreIndexPage() {
         </div>
       </div>
 
-      {/* Bảng dữ liệu */}
       {!selectedClassId ? (
         <div className="flex flex-col items-center justify-center py-16 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
           <p className="text-gray-500 mb-2">Vui lòng chọn lớp học để xem danh sách.</p>

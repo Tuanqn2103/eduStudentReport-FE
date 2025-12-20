@@ -44,9 +44,9 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
       title: "Trạng thái Điểm", 
       render: (row) => {
         if (row.reportStatus === 'Đã công bố') 
-          return <Tag color="green" icon={<CheckCircle size={12}/>}>Đã công bố</Tag>;
+          return <Tag color="green">Đã công bố</Tag>;
         if (row.reportStatus === 'Lưu nháp') 
-          return <Tag color="orange" icon={<Clock size={12}/>}>Lưu nháp</Tag>;
+          return <Tag color="orange">Lưu nháp</Tag>;
         return <Tag color="default">Chưa nhập</Tag>;
       }
     },
@@ -54,7 +54,7 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
       key: "isParentViewed", 
       title: "Phụ huynh", 
       render: (row) => row.isParentViewed 
-        ? <Tag color="blue" icon={<Eye size={12}/>}>Đã xem</Tag> 
+        ? <Tag color="blue">Đã xem</Tag> 
         : <span className="text-gray-400 text-sm">Chưa xem</span>
     },
     {
@@ -93,7 +93,6 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
             <ArrowLeft size={18} /> Quay lại
           </Button>
           <div className="h-6 w-px bg-slate-300 mx-2"></div>
-          <span className="font-medium text-slate-700">Chọn kỳ học:</span>
           <Select 
             value={term} 
             onChange={setTerm} 
