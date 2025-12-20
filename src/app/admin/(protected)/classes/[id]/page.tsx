@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import PageContainer from "@/components/layout/PageContainer";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import { Table, Column } from "@/components/ui/Table"; // Import type Column nếu Table có export
+import { Table, Column } from "@/components/ui/Table";
 import { classService } from "@/services/admin/class.service";
 import { studentService } from "@/services/admin/student.service";
 import { useQuery } from "@tanstack/react-query";
@@ -15,24 +15,18 @@ import { Student } from "@/types/admin.types";
 
 export default function ClassDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
-  
-  // 1. Unwrap params (Next.js 15+)
   const { id } = use(params);
-
-  // 2. Fetch thông tin Lớp
   const { data: classData, isLoading: loadingClass } = useQuery({
     queryKey: ["class", id],
     queryFn: () => classService.getById(id),
   });
 
-  // 3. Fetch danh sách Học sinh
   const { data: students, isLoading: loadingStudents } = useQuery({
     queryKey: ["class-students", id],
     queryFn: () => studentService.getByClass(id),
-    enabled: !!id // Chỉ chạy khi có id
+    enabled: !!id
   });
 
-  // 4. Xử lý Loading / Not Found
   if (loadingClass) {
     return <div className="flex justify-center p-20"><Spin size="large" /></div>;
   }
@@ -40,8 +34,6 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
   if (!classData) {
     return <div className="text-center p-10 text-gray-500">Không tìm thấy thông tin lớp học.</div>;
   }
-
-  // 5. Cấu hình cột cho bảng Học sinh
   const studentColumns: Column<Student>[] = [
     { 
       key: "studentCode", 
@@ -82,7 +74,6 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
       title={`Chi tiết lớp ${classData.className}`} 
       subtitle="Thông tin chung và danh sách học sinh"
     >
-      {/* Nút quay lại */}
       <div className="mb-6">
         <Button 
           variant="ghost" 
@@ -94,7 +85,6 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
       </div>
 
       <div className="grid grid-cols-1 gap-6">
-        {/* Card Thông tin Lớp */}
         <Card className="bg-gradient-to-r from-blue-50 to-white border-blue-100">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
@@ -111,7 +101,6 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
               </div>
             </div>
             
-            {/* Trạng thái phân công */}
             <div className="flex flex-col items-end">
                <p className="text-xs text-gray-500 mb-1 uppercase tracking-wider">Giáo viên chủ nhiệm</p>
                {classData.teacherIds && classData.teacherIds.length > 0 ? (
@@ -123,7 +112,6 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
           </div>
         </Card>
 
-        {/* Bảng Danh sách Học sinh */}
         <div className="space-y-4">
           <div className="flex justify-between items-center bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
             <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
@@ -131,8 +119,6 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
               Danh sách học sinh
             </h3>
             
-            {/* Nút Import (Truyền classId vào để tiện import luôn vào lớp này) */}
-            {/* Lưu ý: Bạn cần xử lý logic nhận query param ở trang Import nếu muốn tính năng này hoạt động mượt */}
             <Button 
               size="sm" 
               onClick={() => router.push(`/admin/students/import`)} 
