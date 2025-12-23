@@ -33,7 +33,6 @@ export default function AdminLoginPage() {
     } catch (error: any) {
       console.error("Login Error:", error);
       const errorMessage = error.message || "Đăng nhập thất bại";
-      // message.error(errorMessage);
       throw error; 
     } finally {
       setLoading(false);
@@ -49,7 +48,7 @@ export default function AdminLoginPage() {
         { name: "phoneNumber", label: "Số điện thoại", placeholder: "09xx xxx xxx" },
         { name: "password", label: "Mật khẩu", type: "password", placeholder: "••••••••" },
       ]}
-      submitLabel={loading ? "Đang xử lý..." : "Đăng nhập"} // Hiển thị trạng thái nút
+      submitLabel={loading ? "Đang xử lý..." : "Đăng nhập"}
       onSubmit={handleSubmit}
     />
   );

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card, CardContent } from "@/components/ui/Card";
-import { BookOpen, Lock, Phone, Sparkles } from "lucide-react";
+import { BookOpen, Sparkles, Eye, EyeOff } from "lucide-react";
 import TeacherImages from "@/components/ui/TeacherImages";
 import { cn } from "@/lib/utils";
 
@@ -38,9 +38,11 @@ export default function AuthForm({
   );
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const isTeacher = role === "teacher";
   const isAdmin = role === "admin";
+  const hasPasswordField = fields.some((field) => field.type === "password");
 
   const handleChange = (name: string, value: string) => {
     setFormState((prev) => ({ ...prev, [name]: value }));
@@ -82,7 +84,6 @@ export default function AuthForm({
           )}
         >
           <CardContent className="p-6 sm:p-8">
-            {/* Header */}
             <div className="mb-6 sm:mb-8 text-center">
               {isTeacher ? (
                 <motion.div
@@ -152,7 +153,6 @@ export default function AuthForm({
               </motion.div>
             </div>
 
-            {/* Form */}
             <form className="space-y-5" onSubmit={handleSubmit}>
               {fields.map((field, index) => (
                 <motion.div
@@ -164,7 +164,7 @@ export default function AuthForm({
                   <Input
                     name={field.name}
                     label={field.label}
-                    type={field.type || "text"}
+                    type={field.type === "password" ? (showPassword ? "text" : "password") : field.type || "text"}
                     placeholder={field.placeholder}
                     value={formState[field.name]}
                     onChange={(e) => handleChange(field.name, e.target.value)}
@@ -172,6 +172,26 @@ export default function AuthForm({
                   />
                 </motion.div>
               ))}
+
+              {hasPasswordField && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="flex items-center space-x-2"
+                >
+                  <input
+                    type="checkbox"
+                    id="showPassword"
+                    checked={showPassword}
+                    onChange={() => setShowPassword(!showPassword)}
+                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  />
+                  <label htmlFor="showPassword" className="flex items-center text-sm text-gray-700 cursor-pointer">
+                    Hiển thị mật khẩu
+                  </label>
+                </motion.div>
+              )}
 
               {error && (
                 <motion.div

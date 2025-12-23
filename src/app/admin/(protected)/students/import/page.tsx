@@ -219,7 +219,7 @@ export default function ImportStudentPage() {
         dataIndex: "pin",
         key: "pin",
         width: 200,
-        align: "center" as const, // Căn giữa
+        align: "center" as const,
         render: (pin: string) => (
           <div className="bg-slate-100 border border-slate-300 rounded px-3 py-1 inline-block font-mono text-lg font-bold tracking-widest text-slate-800">
             {pin}
