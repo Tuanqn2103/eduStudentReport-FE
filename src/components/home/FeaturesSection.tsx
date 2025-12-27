@@ -48,9 +48,10 @@ export default function FeaturesSection() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 + 0.1 }}
             whileHover={{ y: -6, scale: 1.01 }}
+            className="h-full"
           >
-            <Card className="border-2 hover:shadow-lg group transition-shadow">
-              <CardHeader>
+            <Card className="border-2 hover:shadow-lg group transition-shadow h-full flex flex-col">
+              <CardHeader className="flex-1">
                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-3 transition-colors ${item.bg}`}>
                   {item.icon}
                 </div>

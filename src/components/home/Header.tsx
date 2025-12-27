@@ -16,10 +16,6 @@ export default function Header() {
               <p className="text-sm text-gray-600">Sổ Liên Lạc Điện Tử</p>
             </div>
           </div>
-
-          {/* <Button variant="outline" size="sm" asChild>
-            <Link href="parent/login">Đăng nhập</Link>
-          </Button> */}
         </div>
       </div>
     </header>

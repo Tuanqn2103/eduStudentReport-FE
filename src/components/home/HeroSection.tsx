@@ -1,4 +1,3 @@
-/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import Link from "next/link";
@@ -32,30 +31,32 @@ export default function HeroSection() {
         <p className="text-center text-gray-700 text-lg sm:whitespace-nowrap mb-8">
           Hệ thống sổ liên lạc điện tử giúp phụ huynh cập nhật thông tin học tập của con em mọi lúc, mọi nơi.
         </p>
-
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="inline-flex gap-4 flex-col sm:flex-row justify-center">
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
             <Button
               size="lg"
-              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 text-white h-14 flex items-center justify-center w-full"
               asChild
             >
-              <Link href="/parent/login" className="flex items-center">
+              <Link href="/parent/login" className="flex items-center justify-center w-full h-full">
                 <Users className="w-5 h-5 mr-2" /> Dành cho Phụ huynh
               </Link>
             </Button>
           </motion.div>
 
           <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-            <Button size="lg" variant="outline" className="border-2" asChild>
-              <Link href="/teacher/login" className="flex items-center">
+            <Button
+              size="lg"
+              variant="outline"
+              className="border-2 h-14 flex items-center justify-center w-full"
+              asChild
+            >
+              <Link href="/teacher/login" className="flex items-center justify-center w-full h-full">
                 <GraduationCap className="w-5 h-5 mr-2" /> Dành cho Giáo viên
               </Link>
             </Button>
           </motion.div>
         </div>
-
       </motion.div>
     </SectionWrapper>
   );
