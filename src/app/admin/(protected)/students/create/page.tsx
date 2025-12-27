@@ -109,16 +109,6 @@ export default function CreateStudentPage() {
 
   return (
     <PageContainer title="Thêm học sinh mới" subtitle="Tạo hồ sơ học sinh và cấp mã PIN">
-      <div className="mb-6">
-        <Button
-          type="text"
-          icon={<ArrowLeft size={16} />}
-          onClick={() => router.back()}
-          className="hover:bg-slate-100 text-slate-600 pl-0"
-        >
-          Quay lại danh sách
-        </Button>
-      </div>
       <StudentForm onSubmit={handleCreate} isLoading={loading} />
     </PageContainer>
   );

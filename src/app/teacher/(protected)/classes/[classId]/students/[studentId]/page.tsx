@@ -109,7 +109,7 @@ export default function StudentDetailPage({
       <Button
         variant="ghost"
         onClick={() => router.push(`/teacher/classes/${classId}`)}
-        className="mb-6 pl-0 gap-2 text-pink-600 hover:text-pink-700 hover:bg-pink-50"
+        className="mb-6 pl-0 gap-2 text-pink-600 hover-text:bg-pink-200 cursor-pointer"
       >
         <ArrowLeft size={18} />
         Quay lại lớp học
@@ -118,8 +118,6 @@ export default function StudentDetailPage({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         <div className="lg:col-span-4">
           <div className="bg-white rounded-2xl border border-pink-100 shadow-sm overflow-hidden">
-            <div className="h-28 rounded-t-2xl bg-gradient-to-r from-pink-400 to-rose-400" />
-
             <div className="px-6 pb-6 relative">
               <div className="ml-0 mt-6">
                 <h2 className="text-lg font-semibold text-slate-800">
@@ -198,7 +196,7 @@ export default function StudentDetailPage({
                       role="tab"
                       aria-pressed={formData.gender === "Nam"}
                       onClick={() => setFormData({ ...formData, gender: "Nam" })}
-                      className={`px-4 py-2 text-sm font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-pink-200 ${formData.gender === "Nam"
+                      className={`px-4 py-2 text-sm font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-pink-200 cursor-pointer ${formData.gender === "Nam"
                           ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow"
                           : "bg-white text-slate-700"
                         }`}
@@ -211,7 +209,7 @@ export default function StudentDetailPage({
                       role="tab"
                       aria-pressed={formData.gender === "Nữ"}
                       onClick={() => setFormData({ ...formData, gender: "Nữ" })}
-                      className={`px-4 py-2 text-sm font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-pink-200 ${formData.gender === "Nữ"
+                      className={`px-4 py-2 text-sm font-medium rounded-md transition-all focus:outline-none focus:ring-2 focus:ring-pink-200 cursor-pointer ${formData.gender === "Nữ"
                           ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow"
                           : "bg-white text-slate-700"
                         }`}

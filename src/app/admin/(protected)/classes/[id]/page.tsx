@@ -78,7 +78,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
         <Button 
           variant="ghost" 
           onClick={() => router.back()} 
-          className="gap-2 pl-0 hover:bg-transparent hover:text-blue-600"
+          className="gap-2 pl-0 hover:bg-transparent hover:text-blue-600 cursor-pointer"
         >
           <ArrowLeft size={18} /> Quay lại danh sách
         </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -25,6 +25,59 @@ interface AuthFormProps {
   onSubmit: (values: Record<string, string>) => Promise<void>;
 }
 
+const REMEMBER_KEY_PREFIX = "auth_remember_";
+const REMEMBER_EXPIRY_DAYS = 30;
+
+const saveRememberMe = (role: string, credentials: Record<string, string>) => {
+  if (typeof window === "undefined") return;
+  
+  const expiry = new Date();
+  expiry.setDate(expiry.getDate() + REMEMBER_EXPIRY_DAYS);
+  
+  const data = {
+    credentials,
+    expiry: expiry.getTime(),
+  };
+  
+  try {
+    localStorage.setItem(`${REMEMBER_KEY_PREFIX}${role}`, JSON.stringify(data));
+  } catch (e) {
+    console.error("Failed to save remember me data:", e);
+  }
+};
+
+const getRememberMe = (role: string): Record<string, string> | null => {
+  if (typeof window === "undefined") return null;
+  
+  try {
+    const saved = localStorage.getItem(`${REMEMBER_KEY_PREFIX}${role}`);
+    if (!saved) return null;
+    
+    const data = JSON.parse(saved);
+    const now = new Date().getTime();
+    
+    if (data.expiry && now > data.expiry) {
+      localStorage.removeItem(`${REMEMBER_KEY_PREFIX}${role}`);
+      return null;
+    }
+    
+    return data.credentials;
+  } catch (e) {
+    console.error("Failed to get remember me data:", e);
+    return null;
+  }
+};
+
+const clearRememberMe = (role: string) => {
+  if (typeof window === "undefined") return;
+  
+  try {
+    localStorage.removeItem(`${REMEMBER_KEY_PREFIX}${role}`);
+  } catch (e) {
+    console.error("Failed to clear remember me data:", e);
+  }
+};
+
 export default function AuthForm({
   role,
   title,
@@ -39,21 +92,45 @@ export default function AuthForm({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const isTeacher = role === "teacher";
   const isAdmin = role === "admin";
   const hasPasswordField = fields.some((field) => field.type === "password");
 
+  useEffect(() => {
+    const savedCredentials = getRememberMe(role);
+    if (savedCredentials) {
+      setFormState(savedCredentials);
+      setRememberMe(true);
+    }
+  }, [role]);
+
   const handleChange = (name: string, value: string) => {
     setFormState((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRememberMeChange = (checked: boolean) => {
+    setRememberMe(checked);
+    
+    if (!checked) {
+      clearRememberMe(role);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    
     try {
       await onSubmit(formState);
+      
+      if (rememberMe) {
+        saveRememberMe(role, formState);
+      } else {
+        clearRememberMe(role);
+      }
     } catch (err: any) {
       setError(err?.message || "Đăng nhập thất bại");
     } finally {
@@ -160,6 +237,7 @@ export default function AuthForm({
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.4 + index * 0.1 }}
+                  className="relative"
                 >
                   <Input
                     name={field.name}
@@ -169,7 +247,22 @@ export default function AuthForm({
                     value={formState[field.name]}
                     onChange={(e) => handleChange(field.name, e.target.value)}
                     required
+                    autoComplete={field.type === "password" ? "current-password" : "username"}
                   />
+                  {field.type === "password" && (
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-[38px] text-gray-500 hover:text-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 rounded cursor-pointer"
+                      aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
+                    </button>
+                  )}
                 </motion.div>
               ))}
 
@@ -178,18 +271,23 @@ export default function AuthForm({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
-                  className="flex items-center space-x-2"
+                  className="flex items-center"
                 >
-                  <input
-                    type="checkbox"
-                    id="showPassword"
-                    checked={showPassword}
-                    onChange={() => setShowPassword(!showPassword)}
-                    className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                  />
-                  <label htmlFor="showPassword" className="flex items-center text-sm text-gray-700 cursor-pointer">
-                    Hiển thị mật khẩu
-                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id="rememberMe"
+                      checked={rememberMe}
+                      onChange={(e) => handleRememberMeChange(e.target.checked)}
+                      className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded cursor-pointer"
+                    />
+                    <label 
+                      htmlFor="rememberMe" 
+                      className="text-sm text-gray-700 cursor-pointer select-none hover:text-gray-900"
+                    >
+                      Nhớ mật khẩu
+                    </label>
+                  </div>
                 </motion.div>
               )}
 

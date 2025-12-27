@@ -60,11 +60,12 @@ export default function TeacherForm({ initialData, onSubmit, isLoading }: Teache
             type="button"
             variant="ghost"
             onClick={() => router.back()}
+            className="cursor-pointer"
             disabled={isLoading}
           >
             Hủy bỏ
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" className="cursor-pointer" disabled={isLoading}>
             {isLoading ? "Đang xử lý..." : initialData ? "Cập nhật" : "Tạo giáo viên"}
           </Button>
         </div>

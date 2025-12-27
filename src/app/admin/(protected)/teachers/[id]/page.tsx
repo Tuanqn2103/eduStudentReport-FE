@@ -29,7 +29,7 @@ export default function TeacherDetailPage({ params }: { params: Promise<{ id: st
             subtitle="Xem thông tin hồ sơ và lớp chủ nhiệm"
         >
             <div className="mb-6">
-                <Button variant="ghost" onClick={() => router.back()} className="gap-2 pl-0 hover:bg-transparent hover:text-blue-600">
+                <Button variant="ghost" onClick={() => router.back()} className="gap-2 pl-0 hover:bg-transparent hover:text-blue-600 cursor-pointer">
                     <ArrowLeft size={18} /> Quay lại danh sách
                 </Button>
             </div>
@@ -44,6 +44,7 @@ export default function TeacherDetailPage({ params }: { params: Promise<{ id: st
                             <Button
                                 variant="outline"
                                 size="sm"
+                                className="cursor-pointer"
                                 onClick={() => router.push(`/admin/teachers/${teacher.id}/edit`)}
                             >
                                 <Edit size={16} className="mr-2" /> Chỉnh sửa
@@ -116,7 +117,7 @@ export default function TeacherDetailPage({ params }: { params: Promise<{ id: st
                         <p className="text-sm text-blue-700 mb-4">
                             Thông tin giáo viên được cập nhật lần cuối từ hệ thống.
                         </p>
-                        <Button className="w-full bg-white text-blue-600 hover:bg-blue-50 border-blue-200">
+                        <Button className="w-full bg-white text-blue-600 hover:bg-blue-50 border-blue-200 cursor-pointer">
                             Reset Mật khẩu
                         </Button>
                     </Card>

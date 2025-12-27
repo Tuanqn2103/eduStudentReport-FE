@@ -44,7 +44,7 @@ export default function RoleLayout({
               <h1 className="text-lg font-bold text-gray-900">{role.toUpperCase()} Portal</h1>
             </div>
           </div>
-          <Button variant="ghost" size="sm" onClick={handleLogout} className="text-red-600 hover:text-red-700">
+          <Button variant="ghost" size="sm" onClick={handleLogout} className="text-red-600 hover:text-red-700 cursor-pointer">
             <LogOut className="mr-2 h-4 w-4" /> Thoát
           </Button>
         </div>

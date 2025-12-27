@@ -108,10 +108,10 @@ export default function AdminStudentsPage() {
         </div>
 
         <div className="flex gap-3 w-full sm:w-auto">
-          <Button variant="outline" onClick={() => router.push("/admin/students/import")} className="gap-2">
+          <Button variant="outline" onClick={() => router.push("/admin/students/import")} className="gap-2 cursor-pointer">
             <UploadCloud className="h-4 w-4" /> Import Excel
           </Button>
-          <Button onClick={() => router.push("/admin/students/create")} className="gap-2">
+          <Button onClick={() => router.push("/admin/students/create")} className="gap-2 cursor-pointer">
             <Plus className="h-4 w-4" /> Thêm học sinh
           </Button>
         </div>

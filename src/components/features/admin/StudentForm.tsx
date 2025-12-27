@@ -89,7 +89,7 @@ export default function StudentForm({ initialData, onSubmit, isLoading }: Studen
               Ngày sinh
             </label>
             <DatePicker 
-              className="w-full h-10" 
+              className="w-full h-10 cursor-pointer"
               format="DD/MM/YYYY"
               value={formData.dateOfBirth}
               onChange={(date) => setFormData({ ...formData, dateOfBirth: date })}
@@ -125,12 +125,13 @@ export default function StudentForm({ initialData, onSubmit, isLoading }: Studen
           <Button
             type="button"
             variant="ghost"
+            className="cursor-pointer"
             onClick={() => router.back()}
             disabled={isLoading}
           >
             Hủy bỏ
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" className="cursor-pointer" disabled={isLoading}>
             {isLoading ? "Đang xử lý..." : initialData ? "Cập nhật" : "Thêm học sinh"}
           </Button>
         </div>

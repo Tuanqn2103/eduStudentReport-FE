@@ -121,12 +121,13 @@ export default function ClassForm({
           <Button
             type="button"
             variant="ghost"
+            className="cursor-pointer"
             onClick={() => router.back()}
             disabled={isLoading}
           >
             Hủy bỏ
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button type="submit" className="cursor-pointer" disabled={isLoading}>
             {isLoading ? "Đang xử lý..." : "Cập nhật"}
           </Button>
         </div>

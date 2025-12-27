@@ -26,13 +26,13 @@ export function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "inline-flex items-center justify-center rounded-lg font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2";
+    "inline-flex items-center justify-center rounded-lg font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 cursor-pointer";
 
   const variants: Record<Variant, string> = {
     default: "bg-blue-600 hover:bg-blue-700 text-white focus-visible:outline-blue-500",
     outline:
-      "border border-gray-300 hover:bg-gray-100 text-gray-800 focus-visible:outline-blue-500",
-    ghost: "bg-transparent text-gray-700 hover:bg-gray-100 focus-visible:outline-blue-500",
+      "border border-gray-300 text-gray-800 focus-visible:outline-blue-500",
+    ghost: "bg-transparent text-gray-700 focus-visible:outline-blue-500",
   };
 
   const sizes: Record<Size, string> = {

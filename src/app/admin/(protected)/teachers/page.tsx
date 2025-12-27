@@ -101,12 +101,13 @@ export default function AdminTeachersPage() {
         render: (row: TeacherRow) => (
           <div className="flex gap-2 justify-end items-center">
             <Button size="sm" variant="ghost" onClick={() => router.push(`/admin/teachers/${row.id}`)} title="Chi tiết">
-              <Eye className="h-4 w-4 text-slate-500" />
+              <Eye className="h-4 w-4 text-slate-500 cursor-pointer" />
             </Button>
             <Button
               size="sm"
               variant="outline"
               title="Sửa"
+              className="cursor-pointer"
               onClick={() => router.push(`/admin/teachers/${row.id}/edit`)}
             >
               <Edit className="h-4 w-4" />
@@ -120,7 +121,7 @@ export default function AdminTeachersPage() {
               cancelText="Hủy"
               okButtonProps={{ danger: true, loading: deleteMutation.isPending }}
             >
-              <Button size="sm" variant="ghost" className="text-red-600 hover:bg-red-50" title="Xóa">
+              <Button size="sm" variant="ghost" className="text-red-600 hover:bg-red-50 cursor-pointer" title="Xóa">
                 <Trash2 className="h-4 w-4" />
               </Button>
             </Popconfirm>
@@ -139,7 +140,7 @@ export default function AdminTeachersPage() {
     <PageContainer title="Quản lý giáo viên" subtitle="Danh sách giáo viên trong hệ thống">
       <div className="mb-4 flex flex-col sm:flex-row justify-end gap-2">
         <Button
-          className="w-full sm:w-auto flex items-center gap-2"
+          className="w-full sm:w-auto flex items-center gap-2 cursor-pointer"
           onClick={() => router.push("/admin/teachers/create")}
         >
           <Plus className="h-4 w-4" /> Thêm giáo viên

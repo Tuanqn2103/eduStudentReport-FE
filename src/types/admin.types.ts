@@ -4,6 +4,26 @@ export interface ApiResponse<T> {
   message: string;
   data: T;
 }
+export interface RecentTeacher {
+  id: string;
+  fullName: string;
+  phoneNumber: string;
+  createdAt: string;
+}
+
+export interface ChartData {
+  name: string;
+  students: number;
+  teachers: number;
+}
+
+export interface DashboardStats {
+  teacherCount: number;
+  studentCount: number;
+  classCount: number;
+  recentTeachers: RecentTeacher[];
+  chartData: ChartData[];
+}
 
 // --- TEACHER ---
 export interface Teacher {
