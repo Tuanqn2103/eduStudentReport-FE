@@ -43,7 +43,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
     { 
       key: "fullName", 
       title: "Họ và tên",
-      render: (row) => <span className="font-medium text-gray-900">{row.fullName}</span>
+      render: (row) => <span className="font-medium text-[#000000]">{row.fullName}</span>
     },
     { 
       key: "dateOfBirth", 
@@ -80,7 +80,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
           onClick={() => router.back()} 
           className="gap-2 pl-0 hover:bg-transparent hover:text-blue-600 cursor-pointer"
         >
-          <ArrowLeft size={18} /> Quay lại danh sách
+          <ArrowLeft size={18} /> Quay lại
         </Button>
       </div>
 
@@ -114,7 +114,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
 
         <div className="space-y-4">
           <div className="flex justify-between items-center bg-white p-4 rounded-lg border border-gray-100 shadow-sm">
-            <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+            <h3 className="text-lg font-bold text-[#000000] flex items-center gap-2">
               <Users size={20} className="text-gray-500" />
               Danh sách học sinh
             </h3>

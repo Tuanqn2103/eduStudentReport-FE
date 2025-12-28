@@ -28,23 +28,23 @@ export default function TeacherScoreIndexPage() {
   });
 
   const columns = [
-    { 
-      key: "studentCode", 
+    {
+      key: "studentCode",
       title: "Mã HS",
       render: (row: StudentInClass) => <span className="font-mono text-gray-600">{row.studentCode}</span>
     },
-    { 
-      key: "fullName", 
+    {
+      key: "fullName",
       title: "Họ và tên",
-      render: (row: StudentInClass) => <span className="font-medium text-gray-900">{row.fullName}</span>
+      render: (row: StudentInClass) => <span className="font-medium text-[#000000]">{row.fullName}</span>
     },
     {
       key: "status",
       title: "Trạng thái điểm",
       render: (row: StudentInClass) => {
-        if (row.reportStatus === 'Đã công bố') 
+        if (row.reportStatus === 'Đã công bố')
           return <Tag color="green">Đã công bố</Tag>;
-        if (row.reportStatus === 'Lưu nháp') 
+        if (row.reportStatus === 'Lưu nháp')
           return <Tag color="orange">Lưu nháp</Tag>;
         return <Tag color="default">Chưa nhập</Tag>;
       }
@@ -52,24 +52,32 @@ export default function TeacherScoreIndexPage() {
     {
       key: "actions",
       title: "Thao tác",
-      render: (row: StudentInClass) => (
-        <Button 
-          size="sm" 
-          onClick={() => router.push(`/teacher/score/${row.id}?classId=${selectedClassId}&term=${selectedTerm}`)}
-          variant="outline" 
-          className="gap-2"
-        >
-          <Edit size={14} /> Nhập điểm
-        </Button>
-      ),
-    },
+      render: (row: StudentInClass) => {
+        const isEdit =
+          row.reportStatus === "Đã công bố" ||
+          row.reportStatus === "Lưu nháp";
+
+        return (
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-2 w-[120px]"
+            onClick={() =>
+              router.push(`/teacher/score/${row.id}?classId=${selectedClassId}&term=${selectedTerm}`)
+            }
+          >
+            <Edit size={14} /> {isEdit ? "Sửa điểm" : "Nhập điểm"}
+          </Button>
+        );
+      },
+    }
   ];
 
-  if (loadingClasses) return <div className="flex justify-center p-20"><Spin size="large"/></div>;
+  if (loadingClasses) return <div className="flex justify-center p-20"><Spin size="large" /></div>;
 
   return (
     <PageContainer title="Quản lý điểm số" subtitle="Chọn lớp và học sinh để cập nhật bảng điểm">
-      
+
       <div className="bg-white p-4 rounded-xl border border-gray-200 mb-6 shadow-sm flex flex-col sm:flex-row gap-4 items-end sm:items-center">
         <div className="w-full sm:w-64">
           <Select
@@ -101,7 +109,7 @@ export default function TeacherScoreIndexPage() {
           <p className="text-gray-500 mb-2">Vui lòng chọn lớp học để xem danh sách.</p>
         </div>
       ) : loadingStudents ? (
-        <div className="flex justify-center p-10"><Spin size="large"/></div>
+        <div className="flex justify-center p-10"><Spin size="large" /></div>
       ) : (
         <Table
           columns={columns}

@@ -88,7 +88,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
               variant="ghost"
               size="sm"
               onClick={handleLogout}
-              className="hidden sm:flex rounded-full border border-pink-200 text-pink-600 hover:bg-pink-100 hover:text-pink-700 cursor-pointer"
+              className="hidden sm:flex rounded-full border border-pink-200 text-pink-600 hover:text-pink-700 cursor-pointer"
             >
               <LogOut className="mr-2 h-4 w-4" /> Thoát
             </Button>
@@ -136,7 +136,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
-                className="w-full justify-start rounded-full border border-pink-200 text-pink-600 hover:bg-pink-100 hover:text-pink-700 cursor-pointer"
+                className="w-full justify-start rounded-full border border-pink-200 text-pink-600 hover:text-pink-700 cursor-pointer"
               >
                 <LogOut className="mr-2 h-4 w-4" /> Thoát
               </Button>

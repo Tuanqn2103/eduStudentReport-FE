@@ -66,7 +66,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
           onClick={() => router.back()}
           className="gap-2 pl-0 hover:bg-transparent hover:text-blue-600 cursor-pointer"
         >
-          <ArrowLeft size={18} /> Quay lại danh sách
+          <ArrowLeft size={18} /> Quay lại
         </Button>
 
         <Button
@@ -89,7 +89,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
 
               <div className="flex-1 space-y-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{student.fullName}</h2>
+                  <h2 className="text-2xl font-bold text-[#000000]">{student.fullName}</h2>
                   <div className="flex items-center gap-2 mt-1">
                     <Tag color="blue" className="text-sm px-2 py-0.5 m-0 font-mono">
                       {student.studentCode}
@@ -107,7 +107,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
                     <p className="text-sm text-gray-500 flex items-center gap-2">
                       <Calendar size={16} /> Ngày sinh
                     </p>
-                    <p className="font-medium text-gray-900">
+                    <p className="font-medium text-[#000000]">
                       {student.dateOfBirth ? new Date(student.dateOfBirth).toLocaleDateString('vi-VN') : "Chưa cập nhật"}
                     </p>
                   </div>
@@ -131,7 +131,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
           </Card>
 
           <Card>
-            <h3 className="font-bold text-gray-900 mb-4 text-lg">
+            <h3 className="font-bold text-[#000000] mb-4 text-lg">
               Thông tin liên lạc (Phụ huynh)
             </h3>
             <div className="space-y-4">
@@ -140,7 +140,7 @@ export default function StudentDetailPage({ params }: { params: Promise<{ id: st
                   <Phone size={20} className="text-green-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900 mb-2">Số điện thoại đăng ký:</p>
+                  <p className="text-sm font-medium text-[#000000] mb-2">Số điện thoại đăng ký:</p>
                   {student.parentPhones && student.parentPhones.length > 0 ? (
                     <div className="flex flex-wrap gap-2">
                       {student.parentPhones.map((phone, idx) => (

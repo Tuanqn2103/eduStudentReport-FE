@@ -17,7 +17,7 @@ export default function CTASection() {
       >
         <Card className="bg-gradient-to-br from-blue-50 to-green-50 border-2 border-blue-200">
           <CardContent className="p-8 md:p-12 text-center">
-            <h3 className="text-3xl font-bold text-gray-900 mb-4">
+            <h3 className="text-3xl font-bold text-[#000000] mb-4">
               Sẵn sàng kết nối với con?
             </h3>
 

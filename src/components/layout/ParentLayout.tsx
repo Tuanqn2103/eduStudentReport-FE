@@ -48,7 +48,7 @@ export default function ParentLayout({ children }: { children: React.ReactNode }
             variant="ghost"
             size="sm"
             onClick={handleLogout}
-            className="text-red-600 hover:bg-red-50 hover:text-red-700 text-xs sm:text-sm cursor-pointer"
+            className="text-red-600 hover:text-red-700 text-xs sm:text-sm cursor-pointer"
           >
             <LogOut className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" /> 
             <span className="hidden sm:inline">Thoát</span>

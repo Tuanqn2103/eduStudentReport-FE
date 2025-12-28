@@ -58,30 +58,44 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
         : <span className="text-gray-400 text-sm">Chưa xem</span>
     },
     {
-      key: "actions",
-      title: "Thao tác",
-      render: (row) => (
-        <div className="flex gap-2">
-          <Button 
-            variant="outline"
-            size="sm" 
-            className="gap-2"
-            onClick={() => router.push(`/teacher/score/${row.id}?classId=${classId}&term=${term}`)}
-          >
-            <Edit size={14}/> Nhập điểm
-          </Button>
+  key: "actions",
+  title: "Thao tác",
+  render: (row) => {
+    const isEdit =
+      row.reportStatus === "Đã công bố" ||
+      row.reportStatus === "Lưu nháp";
 
-          <Button
-            variant="ghost"
-            size="sm"
-            title="Hồ sơ học sinh"
-            onClick={() => router.push(`/teacher/classes/${classId}/students/${row.id}`)}
-          >
-            <UserCog size={16} className="text-slate-500" />
-          </Button>
-        </div>
-      )
-    }
+    return (
+      <div className="flex gap-2">
+        <Button
+  variant="outline"
+  size="sm"
+  className="gap-2 w-[120px]"
+  onClick={() =>
+    router.push(
+      `/teacher/score/${row.id}?classId=${classId}&term=${term}`
+    )
+  }
+>
+  <Edit size={14} /> {isEdit ? "Sửa điểm" : "Nhập điểm"}
+</Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          title="Hồ sơ học sinh"
+          onClick={() =>
+            router.push(
+              `/teacher/classes/${classId}/students/${row.id}`
+            )
+          }
+        >
+          <UserCog size={16} className="text-slate-500" />
+        </Button>
+      </div>
+    );
+  },
+}
+
   ], [classId, term, router]);
 
   return (

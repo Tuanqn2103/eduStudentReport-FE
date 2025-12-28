@@ -21,7 +21,7 @@ export default function HeroSection() {
           Kết nối Nhà trường - Phụ huynh
         </div>
 
-        <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+        <h2 className="text-4xl md:text-5xl font-bold text-[#000000] mb-6 leading-tight">
           Theo dõi học tập của con <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600">
             dễ dàng và nhanh chóng

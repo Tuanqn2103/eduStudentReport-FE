@@ -30,7 +30,7 @@ export default function TeacherDetailPage({ params }: { params: Promise<{ id: st
         >
             <div className="mb-6">
                 <Button variant="ghost" onClick={() => router.back()} className="gap-2 pl-0 hover:bg-transparent hover:text-blue-600 cursor-pointer">
-                    <ArrowLeft size={18} /> Quay lại danh sách
+                    <ArrowLeft size={18} /> Quay lại
                 </Button>
             </div>
 
@@ -39,7 +39,7 @@ export default function TeacherDetailPage({ params }: { params: Promise<{ id: st
                     <Card>
                         <div className="flex justify-between items-start mb-8">
                             <div>
-                                <h2 className="text-xl font-bold text-gray-900">{teacher.fullName}</h2>
+                                <h2 className="text-xl font-bold text-[#000000]">{teacher.fullName}</h2>
                             </div>
                             <Button
                                 variant="outline"
@@ -58,7 +58,7 @@ export default function TeacherDetailPage({ params }: { params: Promise<{ id: st
                                     <Phone size={16} className="text-blue-500" />
                                     Số điện thoại
                                 </p>
-                                <p className="text-lg text-gray-900 font-semibold tracking-wide">
+                                <p className="text-lg text-[#000000] font-semibold tracking-wide">
                                     {teacher.phoneNumber}
                                 </p>
                             </div>
@@ -85,7 +85,7 @@ export default function TeacherDetailPage({ params }: { params: Promise<{ id: st
                     </Card>
 
                     <Card>
-                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <h3 className="text-lg font-bold text-[#000000] mb-4 flex items-center gap-2">
                             <BookOpen size={20} className="text-blue-600" />
                             Lớp chủ nhiệm ({teacher.managedClassIds?.length || 0})
                         </h3>

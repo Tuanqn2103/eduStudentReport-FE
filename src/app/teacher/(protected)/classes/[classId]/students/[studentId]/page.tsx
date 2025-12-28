@@ -112,7 +112,7 @@ export default function StudentDetailPage({
         className="mb-6 pl-0 gap-2 text-pink-600 hover-text:bg-pink-200 cursor-pointer"
       >
         <ArrowLeft size={18} />
-        Quay lại lớp học
+        Quay lại
       </Button>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

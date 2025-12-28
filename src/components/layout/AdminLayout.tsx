@@ -83,7 +83,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               variant="ghost"
               size="sm"
               onClick={handleLogout}
-              className="hidden sm:flex text-red-600 hover:bg-red-50 hover:text-red-700 cursor-pointer"
+              className="hidden sm:flex text-red-600 hover:text-red-700 cursor-pointer"
             >
               <LogOut className="mr-2 h-4 w-4" /> Thoát
             </Button>
@@ -131,7 +131,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
-                className="w-full justify-start text-red-600 hover:bg-red-50 hover:text-red-700 cursor-pointer"
+                className="w-full justify-start text-red-600 hover:text-red-700 cursor-pointer"
               >
                 <LogOut className="mr-2 h-4 w-4" /> Thoát
               </Button>
