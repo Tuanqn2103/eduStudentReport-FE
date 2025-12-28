@@ -4,11 +4,11 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { 
-  LayoutDashboard, 
-  Users, 
-  FileText, 
-  FileDown, 
+import {
+  LayoutDashboard,
+  Users,
+  FileText,
+  FileDown,
   LogOut,
   Sparkles,
   Menu,
@@ -37,8 +37,11 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
   const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const handleLogout = async () => {
-    const role = typeof window !== "undefined" ? localStorage.getItem("role") || "teacher" : "teacher";
+  const handleLogout = async () => {
+    const role =
+      typeof window !== "undefined"
+        ? localStorage.getItem("role") || "teacher"
+        : "teacher";
 
     try {
       await authService.logout(role);
@@ -61,7 +64,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
         animate={{ y: 0, opacity: 1 }}
         className="sticky top-0 z-50 border-b border-pink-200/50 bg-white/80 backdrop-blur-md shadow-sm"
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:py-4">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 h-14 sm:h-16">
           <div className="flex items-center gap-2 sm:gap-4">
             <motion.div
               whileHover={{ scale: 1.1, rotate: 5 }}
@@ -69,6 +72,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
             >
               <TeacherImages size={36} className="sm:w-12 sm:h-12" />
             </motion.div>
+
             <div className="hidden sm:block">
               <p className="text-xs font-semibold uppercase tracking-wider text-pink-500">
                 Giáo viên
@@ -77,21 +81,24 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
                 Sổ Liên Lạc Điện Tử
               </h1>
             </div>
+
             <div className="sm:hidden">
               <h1 className="text-sm font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent">
                 Giáo viên
               </h1>
             </div>
           </div>
+
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="sm"
               onClick={handleLogout}
-              className="hidden sm:flex rounded-full border border-pink-200 text-pink-600 hover:text-pink-700 cursor-pointer"
+              className="hidden sm:flex rounded-full hover:text-pink-700"
             >
               <LogOut className="mr-2 h-4 w-4" /> Thoát
             </Button>
+
             <Button
               variant="ghost"
               size="sm"
@@ -107,10 +114,10 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden border-b border-pink-200 bg-white/90 backdrop-blur-sm"
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            className="lg:hidden fixed top-14 sm:top-16 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-pink-200 shadow-md"
           >
             <div className="mx-auto max-w-7xl px-4 py-4 space-y-2">
               {navItems.map((item) => {
@@ -132,11 +139,12 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
                   </Link>
                 );
               })}
+
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={handleLogout}
-                className="w-full justify-start rounded-full border border-pink-200 text-pink-600 hover:text-pink-700 cursor-pointer"
+                className="w-full justify-start rounded-full text-pink-600 hover:text-pink-700"
               >
                 <LogOut className="mr-2 h-4 w-4" /> Thoát
               </Button>
@@ -156,30 +164,24 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
             <Sparkles className="w-4 h-4" />
             Điều hướng
           </div>
+
           <div className="space-y-2">
-            {navItems.map((item, index) => {
+            {navItems.map((item) => {
               const active = pathname.startsWith(item.href);
               return (
-                <motion.div
+                <Link
                   key={item.href}
-                  initial={{ x: -10, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.1 + index * 0.05 }}
-                  whileHover={{ scale: 1.02, x: 4 }}
+                  href={item.href}
+                  className={cn(
+                    "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200",
+                    active
+                      ? "bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-lg shadow-pink-200"
+                      : "text-pink-700 hover:bg-pink-100/50"
+                  )}
                 >
-                  <Link
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200",
-                      active
-                        ? "bg-gradient-to-r from-pink-400 to-purple-400 text-white shadow-lg shadow-pink-200"
-                        : "text-pink-700 hover:bg-pink-100/50"
-                    )}
-                  >
-                    {item.icon}
-                    {item.label}
-                  </Link>
-                </motion.div>
+                  {item.icon}
+                  {item.label}
+                </Link>
               );
             })}
           </div>

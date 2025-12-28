@@ -102,11 +102,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden border-b border-slate-200 bg-white"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="lg:hidden fixed top-[64px] left-0 right-0 z-[60] border-b border-slate-200 bg-white shadow-md"
           >
+
             <div className="mx-auto max-w-7xl px-4 py-4 space-y-2">
               {navItems.map((item) => {
                 const active = pathname.startsWith(item.href);
