@@ -10,7 +10,7 @@ import { classService } from "@/services/admin/class.service";
 import { studentService } from "@/services/admin/student.service";
 import { useQuery } from "@tanstack/react-query";
 import { Spin, Tag } from "antd";
-import { ArrowLeft, Users, Calendar, UserPlus } from "lucide-react";
+import { ArrowLeft, Users, Calendar, UserPlus, UploadCloud } from "lucide-react";
 import { Student } from "@/types/admin.types";
 
 export default function ClassDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -121,7 +121,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ id: stri
             
             <Button 
               size="sm" 
-              onClick={() => router.push(`/admin/students/import`)} 
+              onClick={() => router.push(`/admin/students/create?classId=${id}`)} 
               className="gap-2"
             >
               <UserPlus size={16}/> Thêm học sinh

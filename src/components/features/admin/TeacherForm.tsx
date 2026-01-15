@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Card } from "@/components/ui/Card";
-import { CreateTeacherPayload, Teacher } from "@/types/admin.types";
+import { Teacher } from "@/types/admin.types";
+import { Eye, EyeOff } from "lucide-react";
 
 interface TeacherFormProps {
   initialData?: Teacher;
@@ -15,6 +16,8 @@ interface TeacherFormProps {
 
 export default function TeacherForm({ initialData, onSubmit, isLoading }: TeacherFormProps) {
   const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+
   const [formData, setFormData] = useState({
     fullName: initialData?.fullName || "",
     phoneNumber: initialData?.phoneNumber || "",
@@ -46,15 +49,32 @@ export default function TeacherForm({ initialData, onSubmit, isLoading }: Teache
             onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
             required
           />
-          <Input
-            label={initialData ? "Mật khẩu mới (Để trống nếu không đổi)" : "Mật khẩu khởi tạo"}
-            type="password"
-            placeholder="••••••••"
-            value={formData.password}
-            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            required={!initialData}
-          />
+          <div className="relative">
+            <Input
+              label={initialData ? "Mật khẩu mới (Để trống nếu không đổi)" : "Mật khẩu khởi tạo"}
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              required={!initialData}
+              className="pr-10" 
+            />
+            <button
+              type="button"
+              tabIndex={-1}
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-9 text-gray-500 hover:text-gray-700 transition-colors focus:outline-none p-1"
+              aria-label={showPassword ? "Ẩn mật khẩu" : "Hiện mật khẩu"}
+            >
+              {showPassword ? (
+                <EyeOff className="h-5 w-5" />
+              ) : (
+                <Eye className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
+
         <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
           <Button
             type="button"
@@ -66,7 +86,7 @@ export default function TeacherForm({ initialData, onSubmit, isLoading }: Teache
             Hủy bỏ
           </Button>
           <Button type="submit" className="cursor-pointer" disabled={isLoading}>
-            {isLoading ? "Đang xử lý..." : initialData ? "Cập nhật" : "Tạo giáo viên"}
+            {isLoading ? "Đang xử lý..." : initialData ? "Cập nhật" : "Thêm giáo viên"}
           </Button>
         </div>
       </form>

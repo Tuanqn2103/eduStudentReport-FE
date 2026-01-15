@@ -9,7 +9,7 @@ import { Table } from "@/components/ui/Table";
 import { studentService } from "@/services/admin/student.service";
 import { classService } from "@/services/admin/class.service";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Spin, Popconfirm, message, Select, Tag } from "antd";
+import { Spin, Popconfirm, message, Select } from "antd";
 import { Edit, Trash2, Plus, UploadCloud, Eye } from "lucide-react";
 import { Student } from "@/types/admin.types";
 
@@ -29,13 +29,21 @@ export default function AdminStudentsPage() {
     enabled: !!selectedClassId,
   });
 
+  const handleNavigate = (path: string) => {
+    if (selectedClassId) {
+      router.push(`${path}?classId=${selectedClassId}`);
+    } else {
+      router.push(path);
+    }
+  };
+  
   const deleteMutation = useMutation({
     mutationFn: (id: string) => studentService.delete(id),
     onSuccess: () => {
       message.success("Xóa học sinh thành công");
       queryClient.invalidateQueries({ queryKey: ["admin-students", selectedClassId] });
     },
-    onError: (err: any) => message.error("Lỗi khi xóa"),
+    onError: () => message.error("Lỗi khi xóa"),
   });
 
   const columns = useMemo<Column<Student>[]>(() => [
@@ -107,14 +115,23 @@ export default function AdminStudentsPage() {
           />
         </div>
 
-        <div className="flex gap-3 w-full sm:w-auto">
-          <Button variant="outline" onClick={() => router.push("/admin/students/import")} className="gap-2 cursor-pointer">
-            <UploadCloud className="h-4 w-4" /> Import Excel
-          </Button>
-          <Button onClick={() => router.push("/admin/students/create")} className="gap-2 cursor-pointer">
-            <Plus className="h-4 w-4" /> Thêm học sinh
-          </Button>
-        </div>
+        {selectedClassId && (
+          <div className="flex gap-3 w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              onClick={() => handleNavigate("/admin/students/import")}
+              className="gap-2 cursor-pointer"
+            >
+              <UploadCloud className="h-4 w-4" /> Import Excel
+            </Button>
+            <Button 
+              onClick={() => handleNavigate("/admin/students/create")}
+              className="gap-2 cursor-pointer"
+            >
+              <Plus className="h-4 w-4" /> Thêm học sinh
+            </Button>
+          </div>
+        )}
       </div>
 
       {!selectedClassId ? (

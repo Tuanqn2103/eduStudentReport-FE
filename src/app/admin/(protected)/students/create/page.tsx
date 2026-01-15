@@ -1,18 +1,21 @@
 "use client";
 
+
 import PageContainer from "@/components/layout/PageContainer";
 import StudentForm from "@/components/features/admin/StudentForm";
 import { studentService } from "@/services/admin/student.service";
 import { message, Button, Card, Divider } from "antd";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { ArrowLeft, Check, Copy, User, Hash, RefreshCcw } from "lucide-react";
 
 export default function CreateStudentPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [successData, setSuccessData] = useState<{ fullName: string; pin: string; studentCode: string } | null>(null);
 
+  const preSelectedClassId = searchParams.get("classId") || undefined;
   const handleCreate = async (data: any) => {
     try {
       setLoading(true);
@@ -109,7 +112,11 @@ export default function CreateStudentPage() {
 
   return (
     <PageContainer title="Thêm học sinh mới" subtitle="Tạo hồ sơ học sinh và cấp mã PIN">
-      <StudentForm onSubmit={handleCreate} isLoading={loading} />
+      <StudentForm 
+        onSubmit={handleCreate} 
+        isLoading={loading} 
+        initialData={preSelectedClassId ? { classId: preSelectedClassId } as any : undefined}
+      />
     </PageContainer>
   );
 }

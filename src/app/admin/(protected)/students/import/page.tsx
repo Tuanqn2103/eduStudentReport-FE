@@ -1,18 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import * as XLSX from "xlsx";
 import PageContainer from "@/components/layout/PageContainer";
 import { studentService } from "@/services/admin/student.service";
 import { classService } from "@/services/admin/class.service";
-import { Button, Upload, message, Select, Card, Alert, Table, Tag } from "antd";
-import { InboxOutlined, DownloadOutlined, SaveOutlined } from "@ant-design/icons";
+import { Button, Upload, message, Select, Card, Alert, Table, Tag, Modal } from "antd";
+import { InboxOutlined, DownloadOutlined, SaveOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { useQuery } from "@tanstack/react-query";
 import { ImportStudentPayload } from "@/types/admin.types";
 import dayjs from "dayjs";
 
 const { Dragger } = Upload;
+const { confirm } = Modal;
 
 interface ExcelRow {
   "Họ tên": string;
@@ -39,11 +40,12 @@ interface ImportResult {
 
 export default function ImportStudentPage() {
   const router = useRouter();
-  const [classId, setClassId] = useState<string>();
+  const searchParams = useSearchParams();
+  const [classId, setClassId] = useState<string | undefined>(searchParams.get("classId") || undefined);
   const [parsedData, setParsedData] = useState<ParsedStudent[]>([]);
   const [importResults, setImportResults] = useState<ImportResult[]>([]);
   const [loading, setLoading] = useState(false);
-
+  const [hasDownloaded, setHasDownloaded] = useState(false);
   const { data: classes } = useQuery({
     queryKey: ['classes'],
     queryFn: () => classService.getAll()
@@ -137,6 +139,7 @@ export default function ImportStudentPage() {
         message.success(`Đã import thành công ${res.exportData.length} học sinh!`);
         setImportResults(res.exportData);
         setParsedData([]);
+        setHasDownloaded(false);
       }
     } catch (error: unknown) {
       const err = error as { response?: { data?: { message?: string } } };
@@ -157,6 +160,25 @@ export default function ImportStudentPage() {
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "DanhSach_TaiKhoan");
     XLSX.writeFile(wb, "DanhSach_TaiKhoan_HocSinh.xlsx");
+    setHasDownloaded(true);
+  };
+
+  const handleSafeNavigation = (action: () => void) => {
+    if (hasDownloaded) {
+      action();
+    } else {
+      confirm({
+        title: 'Cảnh báo quan trọng!',
+        icon: <ExclamationCircleOutlined className="text-red-500" />,
+        content: 'Bạn CHƯA tải danh sách mã PIN về máy. Nếu rời đi bây giờ, bạn sẽ mất toàn bộ mã PIN này và phải cấp lại thủ công từng cái.',
+        okText: 'Tôi hiểu, vẫn rời đi',
+        okType: 'danger',
+        cancelText: 'Ở lại để tải',
+        onOk() {
+          action();
+        },
+      });
+    }
   };
 
   const downloadTemplate = () => {
@@ -231,8 +253,6 @@ export default function ImportStudentPage() {
     return (
       <PageContainer title="Kết quả Import" subtitle="Danh sách tài khoản vừa khởi tạo">
         <div className="max-w-5xl mx-auto space-y-6">
-
-          {/* Header Card */}
           <div className="bg-green-50 border border-green-200 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-start gap-4">
               <div className="bg-green-100 p-3 rounded-full">
@@ -251,13 +271,16 @@ export default function ImportStudentPage() {
               size="large"
               icon={<DownloadOutlined />}
               onClick={exportResultToExcel}
-              className="bg-green-600 hover:bg-green-700 shadow-md font-semibold h-12 px-6"
+              className={`font-semibold h-12 px-6 shadow-md transition-all ${
+                hasDownloaded 
+                  ? "bg-gray-500 hover:bg-gray-600 border-gray-500 opacity-80"
+                  : "bg-green-600 hover:bg-green-700 border-none animate-pulse"
+              }`}
             >
-              Tải danh sách PIN (.xlsx)
+              {hasDownloaded ? "Đã tải xong (Tải lại)" : "Tải danh sách PIN (.xlsx)"}
             </Button>
           </div>
 
-          {/* Table Card */}
           <Card className="shadow-md border-0" bodyStyle={{ padding: 0 }}>
             <Table
               dataSource={importResults}
@@ -269,12 +292,11 @@ export default function ImportStudentPage() {
             />
           </Card>
 
-          {/* Footer Actions */}
           <div className="flex justify-end gap-4">
-            <Button size="large" onClick={() => { setImportResults([]); router.push("/admin/students"); }}>
+            <Button size="large" onClick={() => { setImportResults([]); router.push("/admin/students"); }} disabled={!hasDownloaded}>
               Về danh sách học sinh
             </Button>
-            <Button size="large" type="dashed" onClick={() => setImportResults([])}>
+            <Button size="large" type="dashed" onClick={() => setImportResults([])} disabled={!hasDownloaded}>
               Tiếp tục Import khác
             </Button>
           </div>
@@ -306,6 +328,7 @@ export default function ImportStudentPage() {
               <Select
                 placeholder="Chọn lớp..."
                 className="w-full"
+                value={classId}
                 size="large"
                 onChange={setClassId}
                 options={classes?.map(c => ({ label: `${c.className} (${c.schoolYear})`, value: c.id }))}
