@@ -61,7 +61,7 @@ export default function TeacherScoreIndexPage() {
           Mã HS
           <Dropdown
             trigger={['click']}
-            dropdownRender={() => (
+            popupRender={() => (
               <div className="bg-white p-3 shadow-lg rounded-lg border border-gray-100 w-60">
                 <Input
                   placeholder="Tìm mã HS..."
@@ -88,7 +88,7 @@ export default function TeacherScoreIndexPage() {
           Họ và tên
           <Dropdown
             trigger={['click']}
-            dropdownRender={() => (
+            popupRender={() => (
               <div className="bg-white p-3 shadow-lg rounded-lg border border-gray-100 w-64">
                 <Input
                   placeholder="Tìm họ tên..."
