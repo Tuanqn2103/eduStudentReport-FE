@@ -25,7 +25,7 @@ export default function ProtectedRoute({ role, children }: ProtectedRouteProps) 
   }, [role, router]);
 
   if (!allowed) {
-    return <div className="flex min-h-[200px] items-center justify-center text-gray-500">Đang kiểm tra quyền...</div>;
+    return <div className="flex min-h-[200px] items-center justify-center text-gray-500">Đang tải trang...</div>;
   }
 
   return <>{children}</>;

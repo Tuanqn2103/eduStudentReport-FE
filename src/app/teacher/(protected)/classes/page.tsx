@@ -63,11 +63,6 @@ export default function TeacherClassesPage() {
                     <CardTitle className="text-2xl font-bold text-pink-900 leading-none">
                       {cls.className}
                     </CardTitle>
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-full bg-gradient-to-br from-pink-400 to-purple-400 text-white shadow-md">
-                        <BookOpen size={14} />
-                      </div>
-                    </div>
                   </div>
                 </CardHeader>
 

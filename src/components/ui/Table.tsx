@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 export interface Column<T> {
   key: string;
-  title: string;
+  title: string | React.ReactNode;
   width?: string;
   align?: "left" | "center" | "right";
   render?: (row: T) => React.ReactNode;
@@ -31,6 +31,11 @@ export function Table<T>({
     >
       <div className="inline-block min-w-full align-middle">
         <table className="min-w-full table-fixed divide-y divide-gray-200 text-left">
+          <colgroup>
+            {columns.map((col) => (
+              <col key={col.key} style={{ width: col.width }} />
+            ))}
+          </colgroup>
           <thead className="bg-gray-50">
             <tr>
               {columns.map((col) => (
@@ -53,7 +58,7 @@ export function Table<T>({
             {data.length === 0 ? (
               <tr>
                 <td
-                  className="px-4 py-6 text-center text-sm text-gray-500"
+                  className="px-4 py-20 text-center text-sm text-gray-500"
                   colSpan={columns.length}
                 >
                   {emptyText}

@@ -94,7 +94,7 @@ export default function TeacherLayout({ children }: { children: React.ReactNode 
               variant="ghost"
               size="sm"
               onClick={handleLogout}
-              className="hidden sm:flex rounded-full hover:text-pink-700"
+              className="w-full justify-start rounded-full text-pink-600 hover:text-pink-700"
             >
               <LogOut className="mr-2 h-4 w-4" /> Thoát
             </Button>

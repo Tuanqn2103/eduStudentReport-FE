@@ -2,8 +2,8 @@
 
 import { useState, useEffect, use } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import { Save, ArrowLeft, Sparkles, CheckCircle } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { teacherService } from "@/services/teacher/teacher.service";
@@ -11,7 +11,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Select } from "antd";
 import TeacherImages from "@/components/ui/TeacherImages";
 import { Grade, UpsertReportPayload } from "@/types/teacher.types";
-import { Spin, message, InputNumber, Input as AntInput } from "antd";
+import { Spin, message, Input as AntInput } from "antd";
 
 const { Option } = Select;
 const { TextArea } = AntInput;
@@ -260,7 +260,6 @@ export default function TeacherStudentScorePage({ params }: { params: Promise<{ 
         >
           {saveMutation.isPending ? "Đang lưu..." : (
             <>
-              <Save className="h-4 w-4 mr-2" />
               Công bố điểm
             </>
           )}
