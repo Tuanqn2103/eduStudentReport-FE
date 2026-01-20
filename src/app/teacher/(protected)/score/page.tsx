@@ -154,7 +154,7 @@ export default function TeacherScoreIndexPage() {
             variant="outline"
             className="gap-2 w-full justify-center"
             onClick={() =>
-              router.push(`/teacher/reports/${row.id}?classId=${selectedClassId}&term=${selectedTerm}`)
+              router.push(`/teacher/score/${row.id}?classId=${selectedClassId}&term=${selectedTerm}`)
             }
           >
             <Edit size={14} /> {isEdit ? "Sửa điểm" : "Nhập điểm"}
